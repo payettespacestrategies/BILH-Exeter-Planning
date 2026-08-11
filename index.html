@@ -74,6 +74,12 @@ input[type="number"]{ -moz-appearance:textfield; }
 .cat-note{ padding:8px 16px; font-size:12px; font-weight:300; color:var(--mut); border-bottom:1px solid var(--line); background:#fbfcfd; }
 .drivers{ padding:12px 16px; border-bottom:1px solid var(--line); display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px 22px; background:#fff; }
 .kpis{ padding:12px 16px; border-bottom:1px solid var(--line); display:grid; grid-template-columns:repeat(auto-fit,minmax(132px,1fr)); gap:10px; background:#fbfcfd; }
+/* a KPI row that must stay on one line — cards shrink instead of wrapping */
+.kpis.oneline{ grid-template-columns:repeat(var(--n,9),minmax(0,1fr)); }
+.kpis.oneline .card{ padding:10px 9px; min-width:0; }
+.kpis.oneline .card .lab{ font-size:9px; letter-spacing:.05em; }
+.kpis.oneline .card .big{ font-size:19px; }
+.kpis.oneline .card .sm{ font-size:10px; line-height:1.25; }
 
 /* tables */
 table.prog{ width:100%; border-collapse:collapse; font-size:13.5px; }
@@ -172,9 +178,9 @@ footer{ margin-top:30px; padding-top:14px; border-top:1px solid var(--line); fon
 </footer>
 </div>
 
-<script src="js/site-graphic.js?v=3.8"></script>
-<script src="js/floor-plans.js?v=3.8"></script>
-<script src="js/key-buildings-data.js?v=3.8"></script>
+<script src="js/site-graphic.js?v=4.0"></script>
+<script src="js/floor-plans.js?v=4.0"></script>
+<script src="js/key-buildings-data.js?v=4.0"></script>
 <script>
 // ====================================================================
 // HEALTHCARE COLOR CATALOG  (PAYETTE_HEALTHCARE_PLAN_COLORS 03/11/2022)
@@ -1155,7 +1161,7 @@ function tabProgram(){
   // A calculation ledger rather than a wall of drivers: one row per equation,
   // inputs on the left where they are used, the value they produce on the
   // right. Every step feeds the next, so the arithmetic is followable.
-  var k2 = el("div",{class:"kpis"});
+  var k2 = el("div",{class:"kpis oneline",style:"--n:9"});
   k2.appendChild(kcard("Baseline ADC", f1(d.baseADC), null, fmt(d.baseDays)+" patient days"));
   k2.appendChild(kcard("Avoidable admissions", fmt(d.avoided), null, "redirected to observation"));
   k2.appendChild(kcard("Inpatient ADC", f1(d.ipADC)));
@@ -1639,8 +1645,8 @@ function render(){
   SITE_LAYOUTS.forEach(function(f){ try{ f(); }catch(e){} });
 }
 </script>
-<script src="js/recap.js?v=3.8"></script>
-<script src="js/floors-tab.js?v=3.8"></script>
+<script src="js/recap.js?v=4.0"></script>
+<script src="js/floors-tab.js?v=4.0"></script>
 <script>
 if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded", render); }
 else { render(); }

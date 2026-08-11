@@ -3,8 +3,10 @@
   <defs>
     <style>
     .cls-1 { fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 26px; }
-    .cls-2 { fill: none; stroke: #aab2bd; stroke-miterlimit: 10; stroke-width: 13px; stroke-dasharray: 46 34; }
+    .cls-2 { fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 26px; }
     .cls-3 { fill: #c6c6c6; }
+    #LEVEL_4_DASH, #LEVEL_4_DASH * { stroke: #aab2bd !important; stroke-width: 13px !important; stroke-dasharray: 46 34 !important; stroke-linecap: butt !important; }
+    #DASH_5, #DASH_5 * { stroke: #aab2bd !important; stroke-width: 13px !important; stroke-dasharray: 46 34 !important; stroke-linecap: butt !important; }
   </style>
   </defs>
   <g id="EAST_WING_L3" data-name="EAST WING L3">

@@ -110,7 +110,7 @@ function flLevelsOf(bldgId){
     var v=FLOOR_LEVELS[k];
     if(v[1]===bldgId) out.push({key:k, label:v[2], n:v[2]==="Ground"?0:Number(v[2].replace("Level ",""))});
   }
-  out.sort(function(a,b){ return b.n-a.n; });
+  out.sort(function(a,b){ return a.n-b.n; });   // lowest level first
   return out;
 }
 

@@ -3,11 +3,12 @@
   <defs>
     <style>
     .cls-1 { stroke: #000; stroke-miterlimit: 10; stroke-width: 26px; fill: none; }
-    .cls-2 { stroke: #aab2bd; stroke-miterlimit: 10; stroke-width: 13px; fill: none; stroke-dasharray: 46 34; }
-    .cls-3 { stroke: #aab2bd; stroke-miterlimit: 10; stroke-width: 13px; fill: none; stroke-dasharray: 46 34; }
+    .cls-2 { stroke: #000; stroke-miterlimit: 10; stroke-width: 26px; fill: none; }
+    .cls-3 { stroke: #000; stroke-miterlimit: 10; stroke-width: 26px; fill: none; }
     .cls-4 { stroke: #000; stroke-miterlimit: 10; stroke-width: 26px; fill: #fff; }
-    .cls-5 { stroke: #aab2bd; stroke-miterlimit: 10; stroke-width: 13px; fill: none; stroke-dasharray: 46 34; }
+    .cls-5 { stroke: #000; stroke-miterlimit: 10; stroke-width: 26px; fill: none; }
     .cls-6 { fill: #c6c6c6; }
+    #LEVEL_4_DASH, #LEVEL_4_DASH * { stroke: #aab2bd !important; stroke-width: 13px !important; stroke-dasharray: 46 34 !important; stroke-linecap: butt !important; }
   </style>
   </defs>
   <g id="OCC_L2-L4" data-name="OCC L2-L4">
