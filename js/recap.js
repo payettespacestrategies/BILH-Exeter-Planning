@@ -523,10 +523,10 @@ function rcBuildTimeline(c){
   hdr.appendChild(endWrap);
   wrap.appendChild(hdr);
 
-  var LBL_W=270;
-  var TL_W=Math.max(840, rcWidth()-4);
+  var LBL_W=310;
+  var TL_W=Math.max(920, rcWidth()-4);
   var TW=TL_W-LBL_W;
-  var ROWH=38, TOP=34;
+  var ROWH=52, TOP=40;
   var sp=rcTimelineSpan(), span=sp.b-sp.a;
   var H=TOP+ROWH*sc.phases.length+32;
   function xOf(v){ return LBL_W+(v-sp.a)/span*TW; }
@@ -538,20 +538,20 @@ function rcBuildTimeline(c){
     var gx=xOf(v);
     tl.appendChild(el("div",{style:"position:absolute;left:"+gx+"px;top:"+TOP+"px;bottom:28px;width:1px;background:"+(isYear?"var(--line2)":"var(--line)")}));
     if(isYear){
-      tl.appendChild(el("div",{style:"position:absolute;left:"+gx+"px;bottom:0;transform:translateX(-50%);font-size:14px;font-weight:800;color:var(--mut)"},[String(Math.round(v))]));
+      tl.appendChild(el("div",{style:"position:absolute;left:"+gx+"px;bottom:0;transform:translateX(-50%);font-size:17px;font-weight:800;color:var(--mut)"},[String(Math.round(v))]));
     }
   }
-  tl.appendChild(el("div",{style:"position:absolute;left:0;width:"+(LBL_W-12)+"px;bottom:0;font-size:14px;font-weight:900;color:var(--mut);text-align:right"},["Year"]));
+  tl.appendChild(el("div",{style:"position:absolute;left:0;width:"+(LBL_W-12)+"px;bottom:0;font-size:17px;font-weight:900;color:var(--mut);text-align:right"},["Year"]));
 
   sc.phases.forEach(function(p,pi){
     var rowY=TOP+pi*ROWH;
     var lab=el("div",{style:[
       "position:absolute","left:0","width:"+(LBL_W-12)+"px","top:"+rowY+"px","height:"+(ROWH-8)+"px",
       "display:flex","align-items:center","justify-content:flex-end","gap:6px",
-      "font-size:13.5px","font-weight:800","color:"+(p.enabled?"var(--ink)":"var(--faint)"),
+      "font-size:16px","font-weight:800","color:"+(p.enabled?"var(--ink)":"var(--faint)"),
       "text-align:right","overflow:hidden","white-space:nowrap"
     ].join(";")});
-    var cb=el("input",{type:"checkbox",style:"width:15px;height:15px;accent-color:#233044;cursor:pointer;flex:none"});
+    var cb=el("input",{type:"checkbox",style:"width:18px;height:18px;accent-color:#233044;cursor:pointer;flex:none"});
     cb.checked=!!p.enabled;
     cb.addEventListener("change",function(e){ p.enabled=e.target.checked; rcRebuild(); });
     lab.appendChild(el("span",{style:"overflow:hidden;text-overflow:ellipsis"},[p.name]));
@@ -566,10 +566,10 @@ function rcBuildTimeline(c){
             (p.obsAfter? "\n+"+p.obsAfter+" observation beds on completion":""),
       style:[
         "position:absolute","left:"+xOf(p.start)+"px","top:"+rowY+"px",
-        "width:"+Math.max(6,xOf(rcPhaseEnd(p))-xOf(p.start))+"px","height:"+(ROWH-10)+"px",
+        "width:"+Math.max(6,xOf(rcPhaseEnd(p))-xOf(p.start))+"px","height:"+(ROWH-8)+"px",
         "background:"+col,"border:1px solid "+darkenColor(col,0.32),
-        "cursor:grab","box-sizing:border-box","display:flex","align-items:center","padding:0 5px",
-        "font-size:12px","font-weight:900","color:rgba(35,48,68,.8)","overflow:hidden","white-space:nowrap"
+        "cursor:grab","box-sizing:border-box","display:flex","align-items:center","padding:0 7px",
+        "font-size:15px","font-weight:900","color:rgba(35,48,68,.8)","overflow:hidden","white-space:nowrap"
       ].join(";")
     },[ rcPhaseUnitBeds(p)? "−"+rcPhaseUnitBeds(p)+" beds" : (p.obsAfter? "+"+p.obsAfter+" obs" : "") ]);
     var lh=el("div",{style:"position:absolute;left:-4px;top:0;bottom:0;width:9px;cursor:ew-resize"});
@@ -654,8 +654,8 @@ function rcBuildBedChart(c){
   c.innerHTML="";
   var sc=rcScenario();
   var sp=rcTimelineSpan(), span=sp.b-sp.a;
-  var W=Math.max(560, rcWidth()-36), LBL=222, TW=W-LBL;
-  var H=224, TOP=28, BOT=H-26, PH=BOT-TOP;
+  var W=Math.max(620, rcWidth()-36), LBL=244, TW=W-LBL;
+  var H=276, TOP=34, BOT=H-34, PH=BOT-TOP;
   var lic=Number(S.constraints.licensed_beds.v);
   var minB=Number(S.constraints.min_operating_beds.v);
 
@@ -677,12 +677,12 @@ function rcBuildBedChart(c){
   // horizontal gridlines
   for(var b=0;b<=maxY;b+=20){
     add("line",{x1:LBL,x2:W,y1:yOf(b),y2:yOf(b),stroke:"#eef1f5","stroke-width":1});
-    add("text",{x:LBL-8,y:yOf(b)+4,"text-anchor":"end","font-size":10,fill:"#8494ab","font-family":"Roboto, Arial, sans-serif"},String(b));
+    add("text",{x:LBL-10,y:yOf(b)+5,"text-anchor":"end","font-size":14,"font-weight":600,fill:"#8494ab","font-family":"Roboto, Arial, sans-serif"},String(b));
   }
   // year gridlines
   for(var y=Math.ceil(sp.a); y<=sp.b+1e-9; y++){
     add("line",{x1:xOf(y),x2:xOf(y),y1:TOP,y2:BOT,stroke:"#e2e6ec","stroke-width":1});
-    add("text",{x:xOf(y),y:H-8,"text-anchor":"middle","font-size":11,"font-weight":700,fill:"#54637d","font-family":"Roboto, Arial, sans-serif"},String(y));
+    add("text",{x:xOf(y),y:H-10,"text-anchor":"middle","font-size":15,"font-weight":700,fill:"#54637d","font-family":"Roboto, Arial, sans-serif"},String(y));
   }
 
   // sample by quarter
@@ -708,16 +708,16 @@ function rcBuildBedChart(c){
 
   // licence + floor lines
   add("line",{x1:LBL,x2:W,y1:yOf(lic),y2:yOf(lic),stroke:"#233044","stroke-width":1.5,"stroke-dasharray":"6 4"});
-  add("text",{x:LBL+6,y:yOf(lic)-5,"font-size":10.5,"font-weight":900,fill:"#233044","font-family":"Roboto, Arial, sans-serif"},
+  add("text",{x:LBL+8,y:yOf(lic)-7,"font-size":14,"font-weight":900,fill:"#233044","font-family":"Roboto, Arial, sans-serif"},
       "Licensed capacity — "+lic+" beds");
   add("line",{x1:LBL,x2:W,y1:yOf(minB),y2:yOf(minB),stroke:"#c0392b","stroke-width":1.5,"stroke-dasharray":"6 4"});
-  add("text",{x:LBL+6,y:yOf(minB)+13,"font-size":10.5,"font-weight":900,fill:"#c0392b","font-family":"Roboto, Arial, sans-serif"},
+  add("text",{x:LBL+8,y:yOf(minB)+17,"font-size":14,"font-weight":900,fill:"#c0392b","font-family":"Roboto, Arial, sans-serif"},
       "Minimum operating beds — "+minB);
 
   // current time marker
   add("line",{x1:xOf(sc.currentTime),x2:xOf(sc.currentTime),y1:TOP-6,y2:BOT,stroke:"#233044","stroke-width":2});
 
-  add("text",{x:LBL-8,y:TOP-12,"text-anchor":"end","font-size":10,"font-weight":900,fill:"#54637d","font-family":"Roboto, Arial, sans-serif"},"Beds");
+  add("text",{x:LBL-10,y:TOP-14,"text-anchor":"end","font-size":15,"font-weight":900,fill:"#54637d","font-family":"Roboto, Arial, sans-serif"},"Beds");
 
   var box=el("div",{class:"box",style:"padding:12px 16px;margin-bottom:16px"});
   box.appendChild(el("h3",{style:"margin-bottom:2px"},["Bed Gain / Loss Through Construction"]));
