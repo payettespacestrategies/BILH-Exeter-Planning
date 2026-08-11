@@ -200,6 +200,8 @@ function rcWidth(){
   var v=document.getElementById("view");
   return (v&&v.clientWidth)? v.clientWidth : 1180;
 }
+var RC_CHART_LABEL_W=244;
+function rcChartWidth(){ return Math.max(620,rcWidth()-38); }
 
 // ====================================================================
 // TAB
@@ -523,8 +525,8 @@ function rcBuildTimeline(c){
   hdr.appendChild(endWrap);
   wrap.appendChild(hdr);
 
-  var LBL_W=310;
-  var TL_W=Math.max(920, rcWidth()-4);
+  var LBL_W=RC_CHART_LABEL_W;
+  var TL_W=rcChartWidth();
   var TW=TL_W-LBL_W;
   var ROWH=52, TOP=40;
   var sp=rcTimelineSpan(), span=sp.b-sp.a;
@@ -613,11 +615,12 @@ function rcBuildTimeline(c){
 
   // current-time flag
   var cx=xOf(sc.currentTime);
-  var line=el("div",{style:"position:absolute;left:"+cx+"px;top:"+(TOP-4)+"px;bottom:28px;width:2px;background:#233044;z-index:5;pointer-events:none"});
+  var line=el("div",{title:"Drag to move through the programme (quarter steps)",
+    style:"position:absolute;left:"+cx+"px;top:"+(TOP-4)+"px;bottom:28px;width:12px;transform:translateX(-6px);background:linear-gradient(to right,transparent 5px,#233044 5px,#233044 7px,transparent 7px);z-index:5;cursor:ew-resize"});
   var flag=el("div",{title:"Drag to move through the programme (quarter steps)",
     style:"position:absolute;left:"+cx+"px;top:0;transform:translateX(-50%);background:#233044;color:#fff;font-size:12.5px;font-weight:900;padding:3px 9px;cursor:ew-resize;white-space:nowrap;z-index:6"
   },[rcFmtYQ(sc.currentTime)]);
-  flag.addEventListener("mousedown",function(e){
+  function dragCurrentTime(e){
     e.stopPropagation(); e.preventDefault();
     var x0=e.clientX, t0=sc.currentTime;
     function onMove(ev){
@@ -633,9 +636,11 @@ function rcBuildTimeline(c){
     }
     document.addEventListener("mousemove",onMove);
     document.addEventListener("mouseup",onUp);
-  });
+  }
+  flag.addEventListener("mousedown",dragCurrentTime);
+  line.addEventListener("mousedown",dragCurrentTime);
   tl.appendChild(line); tl.appendChild(flag);
-  var tlViewport=el("div",{style:"overflow-x:auto;padding-bottom:2px"});
+  var tlViewport=el("div",{style:"overflow-x:hidden;padding-bottom:2px"});
   tlViewport.appendChild(tl);
   wrap.appendChild(tlViewport);
 
@@ -654,7 +659,7 @@ function rcBuildBedChart(c){
   c.innerHTML="";
   var sc=rcScenario();
   var sp=rcTimelineSpan(), span=sp.b-sp.a;
-  var W=Math.max(620, rcWidth()-36), LBL=244, TW=W-LBL;
+  var W=rcChartWidth(), LBL=RC_CHART_LABEL_W, TW=W-LBL;
   var H=276, TOP=34, BOT=H-34, PH=BOT-TOP;
   var lic=Number(S.constraints.licensed_beds.v);
   var minB=Number(S.constraints.min_operating_beds.v);
@@ -719,7 +724,7 @@ function rcBuildBedChart(c){
 
   add("text",{x:LBL-10,y:TOP-14,"text-anchor":"end","font-size":15,"font-weight":900,fill:"#54637d","font-family":"Roboto, Arial, sans-serif"},"Beds");
 
-  var box=el("div",{class:"box",style:"padding:12px 16px;margin-bottom:16px"});
+  var box=el("div",{class:"box",style:"padding:12px 18px;margin-bottom:16px"});
   box.appendChild(el("h3",{style:"margin-bottom:2px"},["Bed Gain / Loss Through Construction"]));
   box.appendChild(el("p",{class:"hint",style:"margin:0 0 8px"},[
     "Staffed licensed beds by quarter: units off-line during their phase, swing beds added back (dashed blue = level without swing), and each unit returning at its converted count. Quarters below the operating floor turn red."

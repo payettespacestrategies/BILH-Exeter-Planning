@@ -37,14 +37,8 @@ var FL = { building:"west", viewAll:true, _drag:null, _moveDrag:null, _sectionMo
 // East Wing and West Wing start higher on the campus datum; the composite
 // level number therefore intentionally differs from the local level number.
 //
-// Levels 3 and 4 were re-issued on 11 Aug as separate drawings. The latest
-// Level 3 adds Northwest Wing L1 and carries the lower campus outline as a
-// dashed reference; Perry is correctly a ghost on Level 4. One gap remains:
-// in LEVEL 4.svg the group EAST_WING_LEVEL_4 holds
-// only its Layer_3 obstacle blocks — the Layer_2 outline every other building
-// carries was not exported, so the East plate there is an open partial shape
-// and its program outline cannot follow it. Flagged with `mismatch`; it needs
-// a re-export, not a transform.
+// Levels 3 and 4 were re-issued on 11 Aug as separate drawings. Level 3 adds
+// Northwest Wing L1; the latest Level 4 supplies complete East/West L3 plates.
 var FL_KEY_VB = [0,0,6973.28,5874.38];
 var FL_KEY_LEVELS = {
   1:{file:"assets/key-buildings/LEVEL 1.svg",parts:[
@@ -52,24 +46,26 @@ var FL_KEY_LEVELS = {
     {bldg:"occ",   lvKey:"occ_l1",   s:1,tx:1609.36,ty:396.19},
     {bldg:"perry", lvKey:"perry_l1", s:1,tx:2217.37,ty:1310.27}
   ]},
-  2:{file:"assets/key-buildings/LEVEL 2.svg?v=4.5",parts:[
+  2:{file:"assets/key-buildings/LEVEL 2.svg?v=4.6",parts:[
     {bldg:"east",  lvKey:"east_g",   s:1,tx:0,ty:0},
     {bldg:"perry", lvKey:"perry_l2", s:1,tx:2217.37,ty:1308.42},
     {bldg:"occ",   lvKey:"occ_l2",   s:1,tx:1608.59,ty:396.19},
     {bldg:"mob",   lvKey:"mob_l2",   s:1,tx:3023.33,ty:317.43}
+  ],labels:[
+    {text:"NORTHWEST WING B",box:[2365.24,2678.86,1248.51,1124.89],dir:[-1,0]}
   ]},
-  3:{file:"assets/key-buildings/LEVEL 3.svg?v=4.5",parts:[
+  3:{file:"assets/key-buildings/LEVEL 3.svg?v=4.6",parts:[
     {bldg:"east",  lvKey:"east_l1",  s:1.698,tx:1986.00,ty:2716.00,siteMaskKey:"LEVEL3_EAST_L1"},
     {bldg:"perry", lvKey:"perry_l3", s:1,tx:2217.37,ty:1305.27},
     {bldg:"nw",    lvKey:"nw_l1",    s:1,tx:1770.18,ty:2402.89},
     {bldg:"occ",   lvKey:"occ_l3",   s:1,tx:1608.59,ty:396.19},
     {bldg:"mob",   lvKey:"mob_l3",   s:1,tx:3023.33,ty:317.43}
   ]},
-  4:{file:"assets/key-buildings/LEVEL 4.svg?v=4.5",parts:[
+  4:{file:"assets/key-buildings/LEVEL 4.svg?v=4.6",parts:[
     {bldg:"occ",  lvKey:"occ_l4",  s:1,tx:1608.59,ty:396.19},
     {bldg:"mob",  lvKey:"mob_l4",  s:1,tx:3023.33,ty:317.44},
-    {bldg:"west", lvKey:"west_l2", s:0.987999233,tx:1296.90802,ty:3420.80039},
-    {bldg:"east", lvKey:"east_l2", sx:1.734114607,sy:1.735208573,tx:2063.83883,ty:2735.63391,mismatch:"LEVEL 4.svg is missing the East Wing outline layer"}
+    {bldg:"west", lvKey:"west_l3", s:1,tx:1282.70,ty:3410.00},
+    {bldg:"east", lvKey:"east_l3", s:1.756979449,tx:2056.04123,ty:2703.10175}
   ]},
   5:{file:"assets/key-buildings/LEVEL 5.svg",parts:[
     {bldg:"east", lvKey:"east_l3", s:1.756979449,tx:2056.04123,ty:2703.10175},
@@ -586,7 +582,7 @@ function flSiteHitKey(hit){
 // Buildings whose label should sit on a fixed side of their plate rather than
 // radially outward — used where a building sits too near the campus centre for
 // the radial rule to give a sensible direction.
-var FL_LABEL_DIR = { perry:[1,0] };
+var FL_LABEL_DIR = { perry:[1,0], nw:[-1,0] };
 
 function flSiteLevelCanvas(levelN){
   var levelDef=FL_KEY_LEVELS[levelN];
@@ -676,6 +672,26 @@ function flSiteLevelCanvas(levelN){
   }
   function draw(){
     ctx.clearRect(0,0,cv.width,cv.height);
+    function drawLabel(txt,c0,halfW,halfH,dir){
+      ctx.font="900 9.5px Roboto, Arial"; ctx.textAlign="center"; ctx.textBaseline="middle";
+      var vx=dir?dir[0]:c0[0]-cv.width/2;
+      var vy=dir?dir[1]:c0[1]-cv.height/2;
+      var vl=Math.sqrt(vx*vx+vy*vy)||1;
+      var tw=ctx.measureText(txt).width;
+      var nx=vx/vl, ny=vy/vl;
+      var edgeX=Math.abs(nx)>1e-6?halfW/Math.abs(nx):Infinity;
+      var edgeY=Math.abs(ny)>1e-6?halfH/Math.abs(ny):Infinity;
+      var edgeDist=Math.min(edgeX,edgeY);
+      var textRadius=Math.abs(nx)*tw/2+Math.abs(ny)*6.5;
+      var lp=[c0[0]+nx*(edgeDist+textRadius+8), c0[1]+ny*(edgeDist+textRadius+8)];
+      lp[0]=Math.max(tw/2+4, Math.min(cv.width-tw/2-4, lp[0]));
+      lp[1]=Math.max(9, Math.min(cv.height-6, lp[1]));
+      ctx.fillStyle="rgba(255,255,255,.9)";
+      ctx.fillRect(lp[0]-tw/2-3, lp[1]-6.5, tw+6, 13);
+      ctx.fillStyle="#54637d";
+      ctx.fillText(txt,lp[0],lp[1]);
+      ctx.textBaseline="alphabetic";
+    }
     parts.forEach(function(p){
       var fills=flSiteDisplayFills(p), drawMask=p.siteMask||p.mask;
       var cellGlobalX=p.siteMask?drawMask.cell:drawMask.cell*p.sx;
@@ -694,7 +710,6 @@ function flSiteLevelCanvas(levelN){
       }
       // Name sits clear of the plate, not on top of its linework: push it out
       // from the campus centre and knock the plan back out behind the text.
-      ctx.font="900 9.5px Roboto, Arial"; ctx.textAlign="center"; ctx.textBaseline="middle";
       var cx0=p.mask.ox+p.mask.w*p.mask.cell/2;
       var cy0=p.mask.oy+p.mask.h*p.mask.cell/2;
       var c0=globalPx(p.gx(cx0),p.gy(cy0));
@@ -704,21 +719,12 @@ function flSiteLevelCanvas(levelN){
       // Default: push the name away from the campus centre. Buildings that sit
       // near that centre get no useful direction that way, so they name their
       // own side — Perry reads to the right of its plate.
-      var dir=FL_LABEL_DIR[p.bldg];
-      var vx,vy;
-      if(dir){ vx=dir[0]; vy=dir[1]; }
-      else { vx=c0[0]-cv.width/2; vy=c0[1]-cv.height/2; }
-      var vl=Math.sqrt(vx*vx+vy*vy)||1;
-      var lp=[c0[0]+vx/vl*(halfW+16), c0[1]+vy/vl*(halfH+12)];
       var txt=bldgName(p.bldg).toUpperCase()+" "+FLOOR_LEVELS[p.lvKey][2].replace("Level ","L");
-      var tw=ctx.measureText(txt).width;
-      lp[0]=Math.max(tw/2+4, Math.min(cv.width-tw/2-4, lp[0]));
-      lp[1]=Math.max(9, Math.min(cv.height-6, lp[1]));
-      ctx.fillStyle="rgba(255,255,255,.9)";
-      ctx.fillRect(lp[0]-tw/2-3, lp[1]-6.5, tw+6, 13);
-      ctx.fillStyle="#54637d";
-      ctx.fillText(txt,lp[0],lp[1]);
-      ctx.textBaseline="alphabetic";
+      drawLabel(txt,c0,halfW,halfH,FL_LABEL_DIR[p.bldg]);
+    });
+    (levelDef.labels||[]).forEach(function(lb){
+      var b=lb.box, c0=globalPx(b[0]+b[2]/2,b[1]+b[3]/2);
+      drawLabel(lb.text,c0,b[2]*scale/2,b[3]*scale/2,lb.dir);
     });
     if(FL._moveDrag && FL._moveDrag.overSite===levelN){
       ctx.save(); ctx.strokeStyle="#1266cc"; ctx.lineWidth=2; ctx.setLineDash([6,4]);

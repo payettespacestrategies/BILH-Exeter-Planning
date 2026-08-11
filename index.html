@@ -299,7 +299,7 @@ var S = {
    floorGSF:{1:14800,2:15800}, keyLevels:1, keyGsf:14800, keyFloorGSF:{1:14800}, keyFloorLabels:{1:"Basement"}},
   {id:"perry",  name:"Perry",                  levels:3, gsf:36800, cat:"inpatient", use:"Surgery / Central Sterile / ED", measured:true,
    floorGSF:{1:15600,2:10600,3:10600}, keyLevels:3, keyGsf:36800, keyFloorGSF:{1:15600,2:10600,3:10600}},
-  {id:"faceng", name:"Facilities Engineering", levels:2, gsf:12500, cat:"inpatient", use:"Central Utility Plant (CUP)", measured:true,
+  {id:"faceng", name:"CUP", levels:2, gsf:12500, cat:"inpatient", use:"Central Utility Plant (CUP)", measured:true,
    floorGSF:{1:6400,2:6100}},
   {id:"occ",    name:"OCC",                    levels:4, gsf:50500, cat:"oncampus",  use:"On-campus ambulatory", measured:true,
    floorGSF:{1:17800,2:10900,3:10900,4:10900}, keyLevels:4, keyGsf:50500, keyFloorGSF:{1:17800,2:10900,3:10900,4:10900}},
@@ -1732,8 +1732,8 @@ function render(){
   SITE_LAYOUTS.forEach(function(f){ try{ f(); }catch(e){} });
 }
 </script>
-<script src="js/recap.js?v=4.3"></script>
-<script src="js/floors-tab.js?v=4.5"></script>
+<script src="js/recap.js?v=4.6"></script>
+<script src="js/floors-tab.js?v=4.6"></script>
 <script>
 if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded", render); }
 else { render(); }

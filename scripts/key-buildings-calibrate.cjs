@@ -133,8 +133,8 @@ async function main() {
   const level4 = read('assets/key-buildings/LEVEL 4.svg');
   const groundSvg = isolate(level2, 'east_wing_ground');
   const level3EastSvg = isolate(level3, 'east_wing_L1');
-  const level4EastSvg = isolate(level4, 'EAST_WING_LEVEL_4');
-  const level4WestSvg = isolate(level4, 'WEST_WING_L2');
+  const level4EastSvg = isolate(level4, 'EAST_WING_L3');
+  const level4WestSvg = isolate(level4, 'WEST_WING_LEVEL_3');
   const boxes = {
     east1: await alphaBBox(east1),
     east2: await alphaBBox(east2),

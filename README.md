@@ -54,7 +54,7 @@ transform can correct it.
 
 ## v0.3 (2026-08-11) — East Wing, CUP, exact hover shapes
 
-- **East Wing** (4 levels) and **CUP / Facilities Engineering** (2 levels) added from the 11 Aug
+- **East Wing** (4 levels) and **CUP** (2 levels) added from the 11 Aug
   drawings. These sheets are printed at **1/16"**, not 1/8", so scale is now stored **per plan**
   (`ftPerUnit`, `cellSf`) and the placement engine carries block budgets in square feet — a block can
   span a 1/8" plate and a 1/16" plate and still measure correctly.
@@ -74,7 +74,7 @@ transform can correct it.
   wrapped onto two balanced lines when long. Leader lengths are staggered per building so the crowded
   centre of the campus stays legible. Label type, leaders and diamonds are sized in **screen pixels**
   and converted to drawing units at layout time, so they hold their size at any zoom level.
-- **Facilities Engineering corrected on the site plan.** It is the detached L-shaped block west of the
+- **CUP corrected on the site plan.** It is the detached L-shaped block west of the
   Northwest Wing, not the plate between OCC and the NW Wing — confirmed by shape-matching the CUP
   floor plan against each candidate footprint (IoU 0.78 vs 0.61). That plate is grouped with the
   Northwest Wing; if it is actually its own building, say so and it gets its own entry.
@@ -168,7 +168,7 @@ assets/source/          RFP + the two program workbooks
   new drawings against RFP Figure 1 (affine matching + footprint areas). Confirm once with Carolyn's
   team — especially the OCC / MOB split of the curved north-east pair and the NW / Perry split of the
   centre masses.
-- East Wing, East Wing Addition, Facilities Engineering, CFOM, Saltonstall: levels + GSF assumed.
+- East Wing, East Wing Addition, CUP, CFOM, Saltonstall: levels + GSF assumed.
 - NW Wing L1 was measured off the furnished CAD sheet (cropped); its clean outline will supersede it.
 - All demand volumes, $/GSF rates, the 78-bed operating floor, and which existing function occupies
   East L1 (assumed available for the observation unit).

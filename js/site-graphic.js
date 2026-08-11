@@ -11,7 +11,7 @@
 // grown back over the stroke so the highlight sits ON the drawn outline.
 //
 // PLAN shapes are the same idea applied to the site plan, which carries its
-// own division lines. Facilities Engineering is the detached L-shaped block
+// own division lines. CUP is the detached L-shaped block
 // west of the NW Wing — confirmed by shape-matching the CUP floor plan
 // (IoU 0.78 vs 0.61 for the plate north of the NW Wing, which is grouped
 // with the NW Wing). East Wing includes the East Wing Addition: the floor
