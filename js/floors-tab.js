@@ -52,20 +52,20 @@ var FL_KEY_LEVELS = {
     {bldg:"occ",   lvKey:"occ_l1",   s:1,tx:1609.36,ty:396.19},
     {bldg:"perry", lvKey:"perry_l1", s:1,tx:2217.37,ty:1310.27}
   ]},
-  2:{file:"assets/key-buildings/LEVEL 2.svg?v=4.4",parts:[
+  2:{file:"assets/key-buildings/LEVEL 2.svg?v=4.5",parts:[
     {bldg:"east",  lvKey:"east_g",   s:1,tx:0,ty:0},
     {bldg:"perry", lvKey:"perry_l2", s:1,tx:2217.37,ty:1308.42},
     {bldg:"occ",   lvKey:"occ_l2",   s:1,tx:1608.59,ty:396.19},
     {bldg:"mob",   lvKey:"mob_l2",   s:1,tx:3023.33,ty:317.43}
   ]},
-  3:{file:"assets/key-buildings/LEVEL 3.svg?v=4.4",parts:[
-    {bldg:"east",  lvKey:"east_l1",  s:1.698,tx:1986.00,ty:2716.00},
+  3:{file:"assets/key-buildings/LEVEL 3.svg?v=4.5",parts:[
+    {bldg:"east",  lvKey:"east_l1",  s:1.698,tx:1986.00,ty:2716.00,siteMaskKey:"LEVEL3_EAST_L1"},
     {bldg:"perry", lvKey:"perry_l3", s:1,tx:2217.37,ty:1305.27},
     {bldg:"nw",    lvKey:"nw_l1",    s:1,tx:1770.18,ty:2402.89},
     {bldg:"occ",   lvKey:"occ_l3",   s:1,tx:1608.59,ty:396.19},
     {bldg:"mob",   lvKey:"mob_l3",   s:1,tx:3023.33,ty:317.43}
   ]},
-  4:{file:"assets/key-buildings/LEVEL 4.svg?v=4.4",parts:[
+  4:{file:"assets/key-buildings/LEVEL 4.svg?v=4.5",parts:[
     {bldg:"occ",  lvKey:"occ_l4",  s:1,tx:1608.59,ty:396.19},
     {bldg:"mob",  lvKey:"mob_l4",  s:1,tx:3023.33,ty:317.44},
     {bldg:"west", lvKey:"west_l2", s:0.987999233,tx:1296.90802,ty:3420.80039},
@@ -543,12 +543,45 @@ function flSiteParts(levelN){
     var p={bldg:q.bldg,lvKey:q.lvKey,sx:q.sx||q.s,sy:q.sy||q.s,tx:q.tx,ty:q.ty,mismatch:q.mismatch};
     p.meta=FLOOR_SRC[flSrcKey(p.lvKey)];
     p.mask=FLOOR_MASKS[flSrcKey(p.lvKey)];
+    p.siteMask=q.siteMaskKey&&typeof FL_SITE_MASKS!=="undefined"?FL_SITE_MASKS[q.siteMaskKey]:null;
     p.gx=function(sheetX){ return p.tx+sheetX*p.sx; };
     p.gy=function(sheetY){ return p.ty+sheetY*p.sy; };
     p.sheetX=function(globalX){ return (globalX-p.tx)/p.sx; };
     p.sheetY=function(globalY){ return (globalY-p.ty)/p.sy; };
     return p;
   });
+}
+
+// A composite sheet can carry a different outline from its corresponding
+// single-building plan. Repack the same placed SF into a composite-native mask
+// for display and hit-testing, while keeping the saved placement seed in the
+// single-plan grid so both views continue to update one another.
+function flSiteDisplayFills(p){
+  var base=flLevelFills(p.lvKey);
+  if(!p.siteMask) return base;
+  if(p._siteFills) return p._siteFills;
+  var out={taken:{},cells:{}}, sm=p.siteMask, canonical=p.mask;
+  var canonicalCellSf=flCellSf(p.lvKey), siteCellSf=Number(sm.cellSf)||canonicalCellSf;
+  for(var key in base.cells){
+    var bits=key.split("#"), bid=bits[0], pi=Number(bits[1]);
+    var pl=flPlacements(bid)[pi];
+    if(!pl){ out.cells[key]=[]; continue; }
+    var sheetX=canonical.ox+(pl.seed[0]+0.5)*canonical.cell;
+    var sheetY=canonical.oy+(pl.seed[1]+0.5)*canonical.cell;
+    var gx=p.gx(sheetX), gy=p.gy(sheetY);
+    var sx=Math.floor((gx-sm.ox)/sm.cell), sy=Math.floor((gy-sm.oy)/sm.cell);
+    var need=Math.max(0,Math.round(base.cells[key].length*canonicalCellSf/siteCellSf));
+    out.cells[key]=flFill(sm,out.taken,sx,sy,need,key);
+  }
+  p._siteFills=out;
+  return out;
+}
+
+function flSiteHitKey(hit){
+  if(!hit) return null;
+  var fills=flSiteDisplayFills(hit.p);
+  var cell=hit.siteCell||hit.cell;
+  return fills.taken[cell[0]+","+cell[1]]||null;
 }
 // Buildings whose label should sit on a fixed side of their plate rather than
 // radially outward — used where a building sits too near the campus centre for
@@ -619,6 +652,18 @@ function flSiteLevelCanvas(levelN){
     var fallback=null;
     for(var i=0;i<parts.length;i++){
       var p=parts[i];
+      if(p.siteMask){
+        var sm=p.siteMask;
+        var scx=Math.floor((gx-sm.ox)/sm.cell), scy=Math.floor((gy-sm.oy)/sm.cell);
+        if(scx>=0&&scy>=0&&scx<sm.w&&scy<sm.h){
+          var sheetX=p.sheetX(gx), sheetY=p.sheetY(gy), cm=p.mask;
+          var ccx=Math.floor((sheetX-cm.ox)/cm.cell), ccy=Math.floor((sheetY-cm.oy)/cm.cell);
+          var siteHit={p:p,lvKey:p.lvKey,cell:[ccx,ccy],siteCell:[scx,scy]};
+          if(sm.rows[scy].charAt(scx)==="0") return siteHit;
+          if(!fallback) fallback=siteHit;
+        }
+        continue;
+      }
       var sx=p.sheetX(gx), sy=p.sheetY(gy), m=p.mask;
       var cx=Math.floor((sx-m.ox)/m.cell), cy=Math.floor((sy-m.oy)/m.cell);
       if(cx>=0&&cy>=0&&cx<m.w&&cy<m.h){
@@ -632,15 +677,17 @@ function flSiteLevelCanvas(levelN){
   function draw(){
     ctx.clearRect(0,0,cv.width,cv.height);
     parts.forEach(function(p){
-      var fills=flLevelFills(p.lvKey);
-      var cellGlobalX=p.mask.cell*p.sx;
-      var cellGlobalY=p.mask.cell*p.sy;
+      var fills=flSiteDisplayFills(p), drawMask=p.siteMask||p.mask;
+      var cellGlobalX=p.siteMask?drawMask.cell:drawMask.cell*p.sx;
+      var cellGlobalY=p.siteMask?drawMask.cell:drawMask.cell*p.sy;
       for(var key in fills.cells){
         var bid=key.split("#")[0], blk=flBlockById(bid);
         if(!blk||!fills.cells[key].length) continue;
         ctx.fillStyle=blk.color; ctx.globalAlpha=0.62;
         fills.cells[key].forEach(function(cxy){
-          var q=globalPx(p.gx(p.mask.ox+cxy[0]*p.mask.cell),p.gy(p.mask.oy+cxy[1]*p.mask.cell));
+          var q=p.siteMask
+            ? globalPx(drawMask.ox+cxy[0]*drawMask.cell,drawMask.oy+cxy[1]*drawMask.cell)
+            : globalPx(p.gx(drawMask.ox+cxy[0]*drawMask.cell),p.gy(drawMask.oy+cxy[1]*drawMask.cell));
           ctx.fillRect(q[0],q[1],cellGlobalX*scale+0.5,cellGlobalY*scale+0.5);
         });
         ctx.globalAlpha=1;
@@ -698,7 +745,7 @@ function flSiteLevelCanvas(levelN){
   });
   cv.addEventListener("mousedown",function(e){
     var h=evHit(e); if(!h) return;
-    var key=flLevelFills(h.lvKey).taken[h.cell[0]+","+h.cell[1]];
+    var key=flSiteHitKey(h);
     if(key){ FL._moveDrag={key:key, startX:e.clientX, startY:e.clientY, moved:false, overSite:levelN};
              cv.style.cursor="grabbing"; e.preventDefault(); }
   });
@@ -709,7 +756,7 @@ function flSiteLevelCanvas(levelN){
       return;
     }
     var h=evHit(e);
-    var key=h? flLevelFills(h.lvKey).taken[h.cell[0]+","+h.cell[1]] : null;
+    var key=flSiteHitKey(h);
     cv.style.cursor=key?"grab":"default";
     if(key){
       var blk=flBlockById(key.split("#")[0]);
@@ -728,7 +775,7 @@ function flSiteLevelCanvas(levelN){
   });
   cv.addEventListener("dblclick",function(e){
     var h=evHit(e); if(!h) return;
-    var key=flLevelFills(h.lvKey).taken[h.cell[0]+","+h.cell[1]];
+    var key=flSiteHitKey(h);
     if(!key) return;
     var bid=key.split("#")[0], pi=Number(key.split("#")[1]);
     var pls=flPlacements(bid);
