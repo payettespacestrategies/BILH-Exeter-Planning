@@ -178,9 +178,9 @@ footer{ margin-top:30px; padding-top:14px; border-top:1px solid var(--line); fon
 </footer>
 </div>
 
-<script src="js/site-graphic.js?v=4.0"></script>
-<script src="js/floor-plans.js?v=4.0"></script>
-<script src="js/key-buildings-data.js?v=4.0"></script>
+<script src="js/site-graphic.js?v=4.3"></script>
+<script src="js/floor-plans.js?v=4.3"></script>
+<script src="js/key-buildings-data.js?v=4.3"></script>
 <script>
 // ====================================================================
 // HEALTHCARE COLOR CATALOG  (PAYETTE_HEALTHCARE_PLAN_COLORS 03/11/2022)
@@ -919,23 +919,32 @@ function tabAssumptions(){
       });
       nameTd.appendChild(el("div",{class:"fl",style:"font-size:11.5px"},[b.use]));
       r.appendChild(nameTd);
+      // Levels and GSF are both editable, measured or not. A measured building
+      // also carries a per-level breakdown, which is rescaled in proportion so
+      // it keeps summing to whatever total is typed here.
       var lv=el("td",{class:"r"});
-      if(b.measured){ lv.appendChild(el("span",{style:"font-feature-settings:'tnum' 1"},[String(b.levels)])); }
-      else {
-        var li=el("input",{class:"input-line",type:"number",value:b.levels,style:"text-align:right"});
-        li.addEventListener("change",function(e){ var n=Math.max(1,Math.round(Number(e.target.value)||1)); b.levels=n; render(); });
-        lv.appendChild(li);
-      }
+      var li=el("input",{class:"input-line",type:"number",value:b.levels,style:"text-align:right",
+        title:b.measured?"Measured from the floor drawings — edit to override":"Planning assumption"});
+      li.addEventListener("change",function(e){
+        b.levels=Math.max(1,Math.round(Number(e.target.value)||1)); render();
+      });
+      lv.appendChild(li);
       r.appendChild(lv);
+
       var gd=el("td",{class:"r"});
-      if(b.measured){
-        gd.appendChild(el("span",{style:"font-feature-settings:'tnum' 1",
-          title:Object.keys(b.floorGSF).map(function(k){return "L"+k+": "+fmt(b.floorGSF[k])+" GSF";}).join("\n")},[fmt(b.gsf)]));
-      } else {
-        var gi=el("input",{class:"input-line",type:"number",value:b.gsf,style:"text-align:right"});
-        gi.addEventListener("change",function(e){ b.gsf=Math.max(0,Number(e.target.value)||0); render(); });
-        gd.appendChild(gi);
-      }
+      var gi=el("input",{class:"input-line",type:"number",value:b.gsf,style:"text-align:right",
+        title:b.floorGSF
+          ? Object.keys(b.floorGSF).map(function(k){return "L"+k+": "+fmt(b.floorGSF[k])+" GSF";}).join("\n")
+          : "Planning assumption"});
+      gi.addEventListener("change",function(e){
+        var n=Math.max(0,Number(e.target.value)||0), was=Number(b.gsf)||0;
+        if(b.floorGSF && was>0){
+          var k=n/was;
+          Object.keys(b.floorGSF).forEach(function(l){ b.floorGSF[l]=Math.round(b.floorGSF[l]*k); });
+        }
+        b.gsf=n; render();
+      });
+      gd.appendChild(gi);
       r.appendChild(gd);
       tbody.appendChild(r);
     });
@@ -1645,8 +1654,8 @@ function render(){
   SITE_LAYOUTS.forEach(function(f){ try{ f(); }catch(e){} });
 }
 </script>
-<script src="js/recap.js?v=4.0"></script>
-<script src="js/floors-tab.js?v=4.0"></script>
+<script src="js/recap.js?v=4.3"></script>
+<script src="js/floors-tab.js?v=4.3"></script>
 <script>
 if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded", render); }
 else { render(); }

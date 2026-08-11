@@ -550,6 +550,11 @@ function flSiteParts(levelN){
     return p;
   });
 }
+// Buildings whose label should sit on a fixed side of their plate rather than
+// radially outward — used where a building sits too near the campus centre for
+// the radial rule to give a sensible direction.
+var FL_LABEL_DIR = { perry:[1,0] };
+
 function flSiteLevelCanvas(levelN){
   var levelDef=FL_KEY_LEVELS[levelN];
   var parts=flSiteParts(levelN);
@@ -649,7 +654,14 @@ function flSiteLevelCanvas(levelN){
       var e0=globalPx(p.gx(p.mask.ox),p.gy(p.mask.oy));
       var e1=globalPx(p.gx(p.mask.ox+p.mask.w*p.mask.cell),p.gy(p.mask.oy+p.mask.h*p.mask.cell));
       var halfW=Math.abs(e1[0]-e0[0])/2, halfH=Math.abs(e1[1]-e0[1])/2;
-      var vx=c0[0]-cv.width/2, vy=c0[1]-cv.height/2, vl=Math.sqrt(vx*vx+vy*vy)||1;
+      // Default: push the name away from the campus centre. Buildings that sit
+      // near that centre get no useful direction that way, so they name their
+      // own side — Perry reads to the right of its plate.
+      var dir=FL_LABEL_DIR[p.bldg];
+      var vx,vy;
+      if(dir){ vx=dir[0]; vy=dir[1]; }
+      else { vx=c0[0]-cv.width/2; vy=c0[1]-cv.height/2; }
+      var vl=Math.sqrt(vx*vx+vy*vy)||1;
       var lp=[c0[0]+vx/vl*(halfW+16), c0[1]+vy/vl*(halfH+12)];
       var txt=bldgName(p.bldg).toUpperCase()+" "+FLOOR_LEVELS[p.lvKey][2].replace("Level ","L");
       var tw=ctx.measureText(txt).width;
