@@ -2,24 +2,123 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6973.28 5874.38">
   <defs>
     <style>
-    .cls-1 { stroke: #000; stroke-miterlimit: 10; stroke-width: 26px; fill: none; }
-    .cls-2 { stroke: #000; stroke-miterlimit: 10; stroke-width: 26px; fill: none; }
-    .cls-3 { stroke: #000; stroke-miterlimit: 10; stroke-width: 26px; fill: #fff; }
-    .cls-4 { stroke: #000; stroke-miterlimit: 10; stroke-width: 26px; fill: none; }
-    .cls-5 { stroke: #000; stroke-miterlimit: 10; stroke-width: 26px; fill: none; }
-    .cls-6 { fill: #c6c6c6; }
-    #LEVEL_3_DASH, #LEVEL_3_DASH * { stroke: #aab2bd !important; stroke-width: 13px !important; stroke-dasharray: 46 34 !important; stroke-linecap: butt !important; }
-  </style>
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-7, .cls-8, .cls-9, .cls-10, .cls-11, .cls-12, .cls-13, .cls-14, .cls-15, .cls-16, .cls-17, .cls-18, .cls-19 {
+        stroke: #000;
+        stroke-miterlimit: 10;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-7, .cls-8, .cls-9, .cls-10, .cls-12, .cls-13, .cls-14, .cls-15, .cls-16, .cls-17, .cls-18, .cls-19 {
+        fill: none;
+      }
+
+      .cls-1, .cls-6, .cls-11, .cls-15 {
+        stroke-width: 4px;
+      }
+
+      .cls-2 {
+        stroke-dasharray: 0 0 19.59 19.59;
+      }
+
+      .cls-2, .cls-3, .cls-4, .cls-5, .cls-7, .cls-8, .cls-9, .cls-10, .cls-12, .cls-13, .cls-14, .cls-16, .cls-17, .cls-18, .cls-19 {
+        stroke-width: 3px;
+      }
+
+      .cls-3 {
+        stroke-dasharray: 0 0 22.31 22.31;
+      }
+
+      .cls-4 {
+        stroke-dasharray: 0 0 22.35 22.35;
+      }
+
+      .cls-5 {
+        stroke-dasharray: 0 0 18.71 18.71;
+      }
+
+      .cls-6 {
+        stroke-dasharray: 0 0 19.73 19.73;
+      }
+
+      .cls-7 {
+        stroke-dasharray: 0 0 20.59 20.59;
+      }
+
+      .cls-8 {
+        stroke-dasharray: 0 0 17.75 17.75;
+      }
+
+      .cls-10 {
+        stroke-dasharray: 0 0 20.24 20.24;
+      }
+
+      .cls-11 {
+        fill: #fff;
+      }
+
+      .cls-12 {
+        stroke-dasharray: 0 0 20.38 20.38;
+      }
+
+      .cls-13 {
+        stroke-dasharray: 0 0 24.99 24.99;
+      }
+
+      .cls-14 {
+        stroke-dasharray: 0 0 21.04 21.04;
+      }
+
+      .cls-15 {
+        stroke-dasharray: 0 0 19.33 19.33;
+      }
+
+      .cls-16 {
+        stroke-dasharray: 0 0 20.05 20.05;
+      }
+
+      .cls-17 {
+        stroke-dasharray: 0 0 19.82 19.82;
+      }
+
+      .cls-18 {
+        stroke-dasharray: 0 0 19.95 19.95;
+      }
+
+      .cls-20 {
+        fill: #c6c6c6;
+      }
+
+      .cls-19 {
+        stroke-dasharray: 0 0 20.28 20.28;
+      }
+
+      /* Web display: retain the supplied dashed geometry while increasing the
+         line weight to remain legible in the six-panel Key Buildings view. */
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-7, .cls-8, .cls-9, .cls-10, .cls-11, .cls-12, .cls-13, .cls-14, .cls-15, .cls-16, .cls-17, .cls-18, .cls-19 {
+        stroke-width: 26px;
+      }
+
+      .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-7, .cls-8, .cls-10, .cls-12, .cls-13, .cls-14, .cls-15, .cls-16, .cls-17, .cls-18, .cls-19 {
+        stroke-dasharray: 46 34;
+        stroke-linecap: butt;
+      }
+
+      #LEVEL_2_DASH, #LEVEL_2_DASH * {
+        stroke: #aab2bd !important;
+        stroke-width: 13px !important;
+        stroke-dasharray: 46 34 !important;
+        stroke-linecap: butt !important;
+      }
+    </style>
   </defs>
   <g id="east_wing_L1" data-name="east wing L1">
     <g id="Layer_3" data-name="Layer 3">
-      <rect class="cls-6" x="3394.26" y="4278.3" width="79.8" height="236.42"/>
-      <rect class="cls-6" x="4385.45" y="3893.52" width="151.61" height="92.21"/>
-      <rect class="cls-6" x="4419.45" y="3976.86" width="100.47" height="81.57"/>
-      <path class="cls-6" d="m3546.16,4518.26v-104.33s143.03-1.18,143.03,0v104.33h-143.03Z"/>
-      <rect class="cls-6" x="4448.41" y="4560.23" width="87.18" height="83.04"/>
-      <path class="cls-6" d="m3279.9,4345.02v-138.72s86.88-1.58,86.88,0v138.72h-86.88Z"/>
-      <path class="cls-6" d="m3343.72,4343.91v-65.28s86.88-.75,86.88,0v65.28h-86.88Z"/>
+      <rect class="cls-20" x="3394.26" y="4278.3" width="79.8" height="236.42"/>
+      <rect class="cls-20" x="4385.45" y="3893.52" width="151.61" height="92.21"/>
+      <rect class="cls-20" x="4419.45" y="3976.86" width="100.47" height="81.57"/>
+      <path class="cls-20" d="m3546.16,4518.26v-104.33s143.03-1.18,143.03,0v104.33h-143.03Z"/>
+      <rect class="cls-20" x="4448.41" y="4560.23" width="87.18" height="83.04"/>
+      <path class="cls-20" d="m3279.9,4345.02v-138.72s86.88-1.58,86.88,0v138.72h-86.88Z"/>
+      <path class="cls-20" d="m3343.72,4343.91v-65.28s86.88-.75,86.88,0v65.28h-86.88Z"/>
     </g>
     <g id="Layer_2" data-name="Layer 2">
       <path class="cls-1" d="m4928.94,3892.64h-250.02v-82.45h55.85v-159.58h-393.64v-260.66h-436.19v-271.3h-430.88v801.47l-194.16-3.54v429.11h114.36v556.77h94.87l292.57,289.03,203.92-207.46h144.02l129.05,127.66-156.03,156.03,93.98,93.98s77.14-70.92,144.51-125.89v-395.7h590.47l-2.66-946.57"/>
@@ -27,67 +126,97 @@
   </g>
   <g id="PERRY_L3" data-name="PERRY L3">
     <g id="Layer_3-2" data-name="Layer 3">
-      <polyline class="cls-6" points="3506.56 2673.95 3506.56 2468.16 3692.77 2468.16 3692.77 2834.8 3613.8 2834.8 3613.8 2673.95"/>
+      <polyline class="cls-20" points="3506.56 2673.95 3506.56 2468.16 3692.77 2468.16 3692.77 2834.8 3613.8 2834.8 3613.8 2673.95"/>
     </g>
     <g id="Layer_2-2" data-name="Layer 2">
       <polyline class="cls-1" points="3777.55 2471.74 3773.9 3118.65 3613.75 3118.52 3613.8 2673.95 3506.56 2673.95 3506.56 2493.18 3356.44 2493.18"/>
       <polyline class="cls-1" points="3356.44 2493.18 3356.44 1526.55 4149.97 1526.55 4149.97 2473.27 3777.55 2471.74"/>
     </g>
   </g>
-  <g id="west_wing_L1" data-name="west wing L1">
+  <g id="NW_WING_L1" data-name="NW WING L1">
     <g id="Layer_3-3" data-name="Layer 3">
-      <polygon class="cls-6" points="2269.61 4725.43 2269.61 4554.62 2309.44 4554.62 2309.44 4425.94 2153.18 4425.94 2153.18 4549.26 2172.33 4549.26 2172.33 4725.43 2269.61 4725.43"/>
-      <rect class="cls-6" x="2144.76" y="4227.56" width="161.62" height="111.83"/>
-      <rect class="cls-6" x="1780.16" y="4022.28" width="94.98" height="205.28"/>
+      <polygon class="cls-20" points="2585.84 3191.74 2585.84 3305.7 2439.8 3305.7 2439.8 3194.04 2585.84 3191.74"/>
+      <rect class="cls-20" x="2966.52" y="3620.68" width="113.36" height="114.13"/>
     </g>
     <g id="Layer_2-3" data-name="Layer 2">
-      <path class="cls-1" d="m3279.14,3916.58l-1134.38,1.53v309.45h-269.62v-205.28h-94.98v526.98h390.64v176.17h242.04v-108.77h356.94v113.53h131.74v-121.19h378.38l-.77-692.43"/>
+      <path class="cls-1" d="m3602.01,3118.98h-129.19v684.77h-1107.58s-9.19-609.7,0-609.7h220.6"/>
+      <rect class="cls-20" x="2664.48" y="3317.61" width="77.62" height="199.15"/>
+      <polyline class="cls-1" points="2585.84 3194.04 2585.84 2890.72 2529.16 2679.32 2631.8 2679.32 2631.8 2637.95 3115.88 2637.95 3115.88 2678.86 3613.75 2678.86 3613.75 2839.66 3613.75 2904.51 3613.75 3118.52 3602.01 3118.98 3602.01 3118.98"/>
+    </g>
+  </g>
+  <g id="LEVEL_2_DASH" data-name="LEVEL 2 DASH">
+    <g>
+      <path class="cls-9" d="m3269.14,3916.59c6.54,0,10-.01,10-.01v10"/>
+      <line class="cls-12" x1="3279.14" y1="3946.96" x2="3279.14" y2="4588.81"/>
+      <polyline class="cls-9" points="3279.14 4599 3279.14 4609 3269.14 4609"/>
+      <line class="cls-14" x1="3248.1" y1="4609" x2="2922.04" y2="4609"/>
+      <polyline class="cls-9" points="2911.52 4609 2901.52 4609 2901.52 4619"/>
+      <line class="cls-10" x1="2901.52" y1="4639.24" x2="2901.52" y2="4710.07"/>
+      <polyline class="cls-9" points="2901.52 4720.19 2901.52 4730.19 2891.52 4730.19"/>
+      <line class="cls-4" x1="2869.17" y1="4730.19" x2="2790.95" y2="4730.19"/>
+      <polyline class="cls-9" points="2779.78 4730.19 2769.78 4730.19 2769.78 4720.19"/>
+      <line class="cls-5" x1="2769.78" y1="4701.48" x2="2769.78" y2="4636.01"/>
+      <polyline class="cls-9" points="2769.78 4626.66 2769.78 4616.66 2759.78 4616.66"/>
+      <line class="cls-17" x1="2739.96" y1="4616.66" x2="2432.75" y2="4616.66"/>
+      <polyline class="cls-9" points="2422.84 4616.66 2412.84 4616.66 2412.84 4626.66"/>
+      <line class="cls-8" x1="2412.84" y1="4644.41" x2="2412.84" y2="4706.55"/>
+      <polyline class="cls-9" points="2412.84 4715.43 2412.84 4725.43 2402.84 4725.43"/>
+      <line class="cls-16" x1="2382.79" y1="4725.43" x2="2192.35" y2="4725.43"/>
+      <polyline class="cls-9" points="2182.33 4725.43 2172.33 4725.43 2172.33 4715.43"/>
+      <line class="cls-3" x1="2172.33" y1="4693.12" x2="2172.33" y2="4570.42"/>
+      <polyline class="cls-9" points="2172.33 4559.26 2172.33 4549.26 2162.33 4549.26"/>
+      <line class="cls-2" x1="2142.74" y1="4549.26" x2="1799.95" y2="4549.26"/>
+      <polyline class="cls-9" points="1790.16 4549.26 1780.16 4549.26 1780.16 4539.26"/>
+      <line class="cls-19" x1="1780.16" y1="4518.98" x2="1780.16" y2="4042.42"/>
+      <polyline class="cls-9" points="1780.16 4032.28 1780.16 4022.28 1790.16 4022.28"/>
+      <line class="cls-13" x1="1815.15" y1="4022.28" x2="1852.64" y2="4022.28"/>
+      <polyline class="cls-9" points="1865.14 4022.28 1875.14 4022.28 1875.14 4032.28"/>
+      <line class="cls-7" x1="1875.14" y1="4052.87" x2="1875.14" y2="4207.27"/>
+      <path class="cls-9" d="m1875.14,4217.56v10s3.61.2,9.98.52"/>
+      <path class="cls-18" d="m1905.05,4229.07c70.21,3.35,239.71,10.22,239.71-1.51,0-14.79-12.18-309.45,0-309.45,11.21,0,963.72-1.3,1114.4-1.5"/>
     </g>
   </g>
   <g id="OCC_L2-L4" data-name="OCC L2-L4">
     <g id="Layer_3-4" data-name="Layer 3">
-      <polygon class="cls-6" points="2391.31 800.53 2391.31 900.1 2303.23 900.1 2303.23 801.3 2391.31 800.53"/>
-      <rect class="cls-6" x="3205.53" y="631.25" width="107.23" height="199.91"/>
-      <path class="cls-6" d="m2477.7,900.1h68.43v49.96s-69.45,0-68.43,0,0-49.96,0-49.96Z"/>
-      <rect class="cls-6" x="2477.69" y="1083.17" width="68.44" height="50.04"/>
-      <rect class="cls-6" x="2978.8" y="1065.13" width="48" height="69.45"/>
-      <rect class="cls-6" x="2978.8" y="900.87" width="46.72" height="67.66"/>
-      <path class="cls-6" d="m2303.23,801.3h-25.02s-4.09-106.72-56.17-109.28-59.74,94.72-59.74,94.72v114.13l140.94-.77v-98.81h-.01Z"/>
+      <polygon class="cls-20" points="2391.31 800.53 2391.31 900.1 2303.23 900.1 2303.23 801.3 2391.31 800.53"/>
+      <rect class="cls-20" x="3205.53" y="631.25" width="107.23" height="199.91"/>
+      <path class="cls-20" d="m2477.7,900.1h68.43v49.96s-69.45,0-68.43,0,0-49.96,0-49.96Z"/>
+      <rect class="cls-20" x="2477.69" y="1083.17" width="68.44" height="50.04"/>
+      <rect class="cls-20" x="2978.8" y="1065.13" width="48" height="69.45"/>
+      <rect class="cls-20" x="2978.8" y="900.87" width="46.72" height="67.66"/>
+      <path class="cls-20" d="m2303.23,801.3h-25.02s-4.09-106.72-56.17-109.28-59.74,94.72-59.74,94.72v114.13l140.94-.77v-98.81h-.01Z"/>
     </g>
     <g id="Layer_2-4" data-name="Layer 2">
       <path class="cls-1" d="m3738.99,814.45l-424.7-.9v-182.3h-1011.06v169.28h-25.02s-2.91-108.47-56.17-108.51c-59.74-.05-58.72,101.11-58.72,101.11l-1.02,107.74h45.96v504h1023.83"/>
-      <polyline class="cls-3" points="3312.76 1152.62 3312.76 908.53 3771.73 912.49"/>
+      <polyline class="cls-11" points="3312.76 1152.62 3312.76 908.53 3771.73 912.49"/>
       <polyline class="cls-1" points="3312.76 1152.62 3232.08 1152.62 3232.08 1404.87"/>
     </g>
   </g>
   <g id="MOB_L2" data-name="MOB L2">
     <g id="Layer_3-5" data-name="Layer 3">
-      <polygon class="cls-6" points="3909.46 645.94 3909.46 994.45 4018.99 994.45 4018.99 740.15 4094.31 740.15 4095.59 645.94 3909.46 645.94"/>
-      <path class="cls-6" d="m4979.35,1453.8c.45-.38-53.73-65.39-53.73-65.39l-89.87,77.62,51.88,64.7,91.72-76.93h0Z"/>
-      <path class="cls-6" d="m5051.5,1270.96l16.09,19.91s72-61.27,116.17-18.38-43.86,109.97-43.86,109.97l-77.67,57.01-90.09-105.61,79.37-62.9h0Z"/>
-      <rect class="cls-6" x="3684.27" y="1314.62" width="215.23" height="211.4"/>
-      <polyline class="cls-6" points="4018.99 994.45 4095.59 994.45 4098.22 994.45 4095.59 645.94 3998.15 720.74 4018.22 987.56"/>
+      <polygon class="cls-20" points="3909.46 645.94 3909.46 994.45 4018.99 994.45 4018.99 740.15 4094.31 740.15 4095.59 645.94 3909.46 645.94"/>
+      <path class="cls-20" d="m4979.35,1453.8c.45-.38-53.73-65.39-53.73-65.39l-89.87,77.62,51.88,64.7,91.72-76.93h0Z"/>
+      <path class="cls-20" d="m5051.5,1270.96l16.09,19.91s72-61.27,116.17-18.38-43.86,109.97-43.86,109.97l-77.67,57.01-90.09-105.61,79.37-62.9h0Z"/>
+      <rect class="cls-20" x="3684.27" y="1314.62" width="215.23" height="211.4"/>
+      <polyline class="cls-20" points="4018.99 994.45 4095.59 994.45 4098.22 994.45 4095.59 645.94 3998.15 720.74 4018.22 987.56"/>
     </g>
     <g id="Layer_2-5" data-name="Layer 2">
       <line class="cls-1" x1="4095.59" y1="1228.07" x2="4095.59" y2="1250.27"/>
       <polyline class="cls-1" points="3837.46 1109.34 3899.5 1314.62 3684.27 1314.62 3684.27 1526.03 4033.54 1526.03 4034.31 1319.22"/>
       <g>
         <path class="cls-1" d="m3534.64,908.53c.19,3.38.48,6.7.86,9.96"/>
-        <path class="cls-2" d="m3539.02,937.91c31.77,128.1,217.27,161.72,278.7,169.39"/>
+        <path class="cls-6" d="m3539.02,937.91c31.77,128.1,217.27,161.72,278.7,169.39"/>
         <path class="cls-1" d="m3827.51,1108.43c6.38.67,9.95.91,9.95.91"/>
       </g>
       <line class="cls-1" x1="3738.99" y1="814.45" x2="3855.84" y2="766.45"/>
       <line class="cls-1" x1="3855.84" y1="662.03" x2="3855.84" y2="766.45"/>
       <g>
         <path class="cls-1" d="m3855.84,662.03c-4.34,0,12.03,0,3.65,0"/>
-        <path class="cls-5" d="m3840.17,662.65c-63.61,4.01-257.24,29.67-294.3,133.3"/>
+        <path class="cls-15" d="m3840.17,662.65c-63.61,4.01-257.24,29.67-294.3,133.3"/>
         <path class="cls-1" d="m3543.04,805.19c-.82,3.19-1.49,6.46-2.02,9.79"/>
       </g>
       <path class="cls-1" d="m4034.31,1319.22l-78.34-238.05,139.61.35v168.77c248.17-3.83,374.55,163.15,374.55,163.15l231.32,273.45,332.43-278.81,28.34,31.4,73.53-53.62s87.57-67.91,46.72-114.89c-33.7-38.75-114.89,19.91-114.89,19.91l-16.09-19.91,120.26-102.64-277.28-317.11c-325.28-373.79-798.89-302.18-798.89-302.18v96.9h-186.13v16.09h-53.61"/>
     </g>
     <line class="cls-1" x1="3771.73" y1="912.49" x2="3837.46" y2="1109.34"/>
-  </g>
-  <g id="LEVEL_3_DASH" data-name="LEVEL 3 DASH">
-    <polyline class="cls-4" points="3506.56 2673.95 3115.88 2673.95 3115.88 2637.95 2631.8 2637.95 2631.8 2679.32 2530.03 2679.32 2585.84 2867.74 2585.84 3194.05 2365.24 3194.05 2365.24 3803.75 3472.82 3803.75"/>
   </g>
 </svg>

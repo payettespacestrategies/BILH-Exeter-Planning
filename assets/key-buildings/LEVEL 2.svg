@@ -55,6 +55,8 @@
     .cls-51 { stroke: #000; stroke-miterlimit: 10; fill: none; stroke-width: 26px; }
     .cls-52 { stroke: #000; stroke-miterlimit: 10; fill: none; stroke-width: 26px; }
     .cls-53 { fill: #c6c6c6; }
+    /* The two curved connector arcs are dashed in the supplied drawing. */
+    .cls-16, .cls-36 { stroke-dasharray: 46 34; stroke-linecap: butt; }
     #LEVEL_1_DASH, #LEVEL_1_DASH * { stroke: #aab2bd !important; stroke-width: 13px !important; stroke-dasharray: 46 34 !important; stroke-linecap: butt !important; }
   </style>
   </defs>

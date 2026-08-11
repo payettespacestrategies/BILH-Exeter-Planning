@@ -37,9 +37,10 @@ var FL = { building:"west", viewAll:true, _drag:null, _moveDrag:null, _sectionMo
 // East Wing and West Wing start higher on the campus datum; the composite
 // level number therefore intentionally differs from the local level number.
 //
-// Levels 3 and 4 were re-issued on 11 Aug as separate drawings (Perry is now
-// correctly a ghost on Level 4), and both West plates re-calibrate to a clean
-// 100% fit. One gap remains: in LEVEL 4.svg the group EAST_WING_LEVEL_4 holds
+// Levels 3 and 4 were re-issued on 11 Aug as separate drawings. The latest
+// Level 3 adds Northwest Wing L1 and carries the lower campus outline as a
+// dashed reference; Perry is correctly a ghost on Level 4. One gap remains:
+// in LEVEL 4.svg the group EAST_WING_LEVEL_4 holds
 // only its Layer_3 obstacle blocks — the Layer_2 outline every other building
 // carries was not exported, so the East plate there is an open partial shape
 // and its program outline cannot follow it. Flagged with `mismatch`; it needs
@@ -51,21 +52,20 @@ var FL_KEY_LEVELS = {
     {bldg:"occ",   lvKey:"occ_l1",   s:1,tx:1609.36,ty:396.19},
     {bldg:"perry", lvKey:"perry_l1", s:1,tx:2217.37,ty:1310.27}
   ]},
-  2:{file:"assets/key-buildings/LEVEL 2.svg",parts:[
+  2:{file:"assets/key-buildings/LEVEL 2.svg?v=4.4",parts:[
     {bldg:"east",  lvKey:"east_g",   s:1,tx:0,ty:0},
     {bldg:"perry", lvKey:"perry_l2", s:1,tx:2217.37,ty:1308.42},
-    {bldg:"nw",    lvKey:"nw_l1",    s:1,tx:1770.18,ty:2402.89},
     {bldg:"occ",   lvKey:"occ_l2",   s:1,tx:1608.59,ty:396.19},
     {bldg:"mob",   lvKey:"mob_l2",   s:1,tx:3023.33,ty:317.43}
   ]},
-  3:{file:"assets/key-buildings/LEVEL 3.svg",parts:[
+  3:{file:"assets/key-buildings/LEVEL 3.svg?v=4.4",parts:[
     {bldg:"east",  lvKey:"east_l1",  s:1.698,tx:1986.00,ty:2716.00},
     {bldg:"perry", lvKey:"perry_l3", s:1,tx:2217.37,ty:1305.27},
-    {bldg:"west",  lvKey:"west_l1",  s:0.993437085,tx:1299.32227,ty:3549.37259},
+    {bldg:"nw",    lvKey:"nw_l1",    s:1,tx:1770.18,ty:2402.89},
     {bldg:"occ",   lvKey:"occ_l3",   s:1,tx:1608.59,ty:396.19},
     {bldg:"mob",   lvKey:"mob_l3",   s:1,tx:3023.33,ty:317.43}
   ]},
-  4:{file:"assets/key-buildings/LEVEL 4.svg",parts:[
+  4:{file:"assets/key-buildings/LEVEL 4.svg?v=4.4",parts:[
     {bldg:"occ",  lvKey:"occ_l4",  s:1,tx:1608.59,ty:396.19},
     {bldg:"mob",  lvKey:"mob_l4",  s:1,tx:3023.33,ty:317.44},
     {bldg:"west", lvKey:"west_l2", s:0.987999233,tx:1296.90802,ty:3420.80039},
