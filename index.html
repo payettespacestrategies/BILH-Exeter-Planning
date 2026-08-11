@@ -927,7 +927,7 @@ function tabAssumptions(){
     tooltip:function(id){ var b=bldg(id); return b.use+" · "+fmt(invGsf(b))+" GSF"+(b.keyGsf!=null?" (Key Buildings · 1/8\")":(b.measured?" (single-building SVG)":" (assumed)")); },
     onhover:hoverRow,
     onclick:function(id){
-      if(FLOOR_LEVELS && flPlanKey && flPlanKey(id,1)){ FL.building=id; state.tab="floors"; if(history.replaceState) history.replaceState(null,"","#floors"); render(); }
+      if(FLOOR_LEVELS && flPlanKey && flPlanKey(id,1)){ FL.building=id; FL.viewAll=false; state.tab="floors"; if(history.replaceState) history.replaceState(null,"","#floors"); render(); }
     }
   });
   sw.appendChild(site.el);
@@ -954,7 +954,7 @@ function tabAssumptions(){
       r.addEventListener("mouseleave",function(){ site.highlight(null); r.classList.remove("sel"); });
       var nameTd = el("td",{class:"bname",style:"cursor:pointer"},[b.name]);
       nameTd.addEventListener("click",function(){
-        if(flPlanKey(b.id,1)){ FL.building=b.id; state.tab="floors"; if(history.replaceState) history.replaceState(null,"","#floors"); render(); }
+        if(flPlanKey(b.id,1)){ FL.building=b.id; FL.viewAll=false; state.tab="floors"; if(history.replaceState) history.replaceState(null,"","#floors"); render(); }
       });
       nameTd.appendChild(el("div",{class:"fl",style:"font-size:11.5px"},[b.use]));
       r.appendChild(nameTd);
