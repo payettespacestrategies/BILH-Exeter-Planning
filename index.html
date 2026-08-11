@@ -50,6 +50,18 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 input[type="number"]{ -moz-appearance:textfield; }
 .input-line{ background:transparent; border:none; border-bottom:1px solid #c7cfdb; padding:3px 0; font-family:inherit; font-feature-settings:'tnum' 1; font-size:.95rem; font-weight:500; color:var(--ink); width:100%; outline:none; }
 .input-line:focus{ border-bottom-color:var(--accent); }
+.num-stepper{ display:inline-flex; align-items:stretch; vertical-align:middle; max-width:100%; }
+.num-stepper.grow{ width:100%; }
+.num-stepper input{ min-width:0; }
+.num-stepper.grow input{ flex:1; }
+.step-arrows{ display:flex; flex-direction:column; margin-left:3px; border:1px solid #c7cfdb; background:#fff; }
+.step-btn{ width:16px; height:11px; padding:0; border:0; background:#f3f6f9; color:var(--mut); font:900 7px/10px Arial,sans-serif; cursor:pointer; }
+.step-btn + .step-btn{ border-top:1px solid #d9dfe7; }
+.step-btn:hover{ background:var(--ink); color:#fff; }
+.module-slider{ display:grid; grid-template-columns:54px minmax(220px,1fr) 54px; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid var(--line); background:#f7f9fc; }
+.module-slider input[type="range"]{ width:100%; accent-color:#233044; cursor:pointer; }
+.module-slider .endpoint{ width:54px; border:1px solid #b9c3d0; background:#fff; padding:5px 4px; text-align:center; font-family:inherit; font-weight:900; color:var(--ink); }
+.module-bed-count{ display:inline-block; min-width:34px; text-align:center; font-size:28px; line-height:1; vertical-align:-2px; }
 .hint{ font-size:12px; font-weight:300; color:var(--faint); margin-top:8px; }
 .assumed{ display:inline-block; font-size:9.5px; font-weight:900; letter-spacing:.09em; text-transform:uppercase; color:#9a6b00; background:#fff5db; border:1px solid #f0dca8; padding:1px 5px; vertical-align:1px; margin-left:6px; }
 
@@ -110,6 +122,7 @@ table.prog td.rown{ width:24px; text-align:center; font-size:11px; color:var(--f
 .band input.bt-input{ flex:1; min-width:120px; font-weight:900; font-size:16px; color:var(--ink); background:transparent; border:none; outline:none; font-family:inherit; }
 tr.totalrow td{ font-weight:900; border-top:2px solid var(--ink); border-bottom:none; font-size:15px; font-feature-settings:'tnum' 1; }
 tr.subtot td{ font-weight:900; background:#f7fafc; }
+tr.inventory-group td{ padding:9px 8px 5px; border-top:2px solid var(--ink); border-bottom:1px solid var(--line); background:#f3f6f9; font-size:11px; font-weight:900; letter-spacing:.09em; text-transform:uppercase; color:var(--ink); }
 .sw{ display:inline-block; width:14px; height:14px; border:1px solid rgba(35,48,68,.35); vertical-align:middle; }
 .delb{ border:none; background:none; color:#c0392b; font-size:13px; cursor:pointer; padding:2px 6px; font-family:inherit; }
 .delb:hover{ font-weight:900; }
@@ -244,7 +257,7 @@ var S = {
    licensed_beds:{v:100,  label:"Licensed bed cap",  unit:"beds", note:"RFP: all decisions designed to maintain operations at or below the 100-bed licensed capacity. Observation beds sit outside the license."},
    budget_cap:{v:165,     label:"Capital hard cap",  unit:"$M",   note:"The $165M commitment under the Definitive Agreement, treated as a hard cap for planning and evaluation."},
    study_months:{v:5,     label:"Study duration",    unit:"months",note:"Five months from Notice to Proceed (NTP 10 Aug 2026)."},
-   min_operating_beds:{v:78, label:"Minimum operating beds", unit:"beds", note:"Planning floor — the fewest staffed beds the hospital can run during construction. Drives phase sequencing on the Bed Recap tab. TO BE CONFIRMED with Clinical Leadership.", assumed:true}
+   min_operating_beds:{v:78, label:"Minimum operating beds", unit:"beds", note:"Planning floor — the fewest staffed beds the hospital can run during construction. Drives phase sequencing on the Scenario & Phasing tab. TO BE CONFIRMED with Clinical Leadership.", assumed:true}
  },
 
  // RFP portfolio figures (approximate, as stated)
@@ -267,7 +280,7 @@ var S = {
    infra_pct:{v:0.20,    label:"MEP / infrastructure uplift", pct:true, note:"Allowance for the CUP, distribution and resiliency work identified in the infrastructure sub-study.", assumed:true},
    soft_pct:{v:0.28,     label:"Soft costs",                 pct:true, note:"A/E, OPM, CM preconstruction, permitting, FF&E, IT, commissioning.", assumed:true},
    contingency_pct:{v:0.15, label:"Design + construction contingency", pct:true, assumed:true},
-   escalation:{v:0.045,  label:"Escalation / yr",            pct:true, note:"Compounded from 2026 to the construction midpoint set on the Bed Recap tab.", assumed:true}
+   escalation:{v:0.045,  label:"Escalation / yr",            pct:true, note:"Compounded from 2026 to the construction midpoint set on the Scenario & Phasing tab.", assumed:true}
  },
 
  // ── Campus buildings ────────────────────────────────────────────────
@@ -277,19 +290,19 @@ var S = {
  // replaced when the next drawing package lands.
  buildings:[
   {id:"west",   name:"West Wing",              levels:4, gsf:36900, cat:"inpatient", use:"Inpatient — Med/Surg (L3, L4)", measured:true,
-   floorGSF:{1:12400,2:9500,3:7500,4:7500}},
+   floorGSF:{1:12400,2:9500,3:7500,4:7500}, keyLevels:4, keyGsf:36500, keyFloorGSF:{1:12200,2:9300,3:7500,4:7500}},
   {id:"east",   name:"East Wing",              levels:4, gsf:118800,cat:"inpatient", use:"Inpatient — ICU/PCU (L2), LDRP/Peds (L3), Med/Surg (L4); Level 1 is the East Wing Addition", measured:true,
-   floorGSF:{1:38400,2:40200,3:24200,4:16000}},
+   floorGSF:{1:38400,2:40200,3:24200,4:16000}, keyLevels:5, keyGsf:117800, keyFloorGSF:{1:28900,2:27700,3:30200,4:18700,5:12300}, keyFloorLabels:{1:"Ground",2:"L1",3:"L2",4:"L3",5:"L4"}},
   {id:"nw",     name:"Northwest Wing",         levels:2, gsf:30600, cat:"inpatient", use:"Diagnostic & treatment", measured:true,
-   floorGSF:{1:14800,2:15800}},
+   floorGSF:{1:14800,2:15800}, keyLevels:1, keyGsf:14800, keyFloorGSF:{1:14800}, keyFloorLabels:{1:"Basement"}},
   {id:"perry",  name:"Perry",                  levels:3, gsf:36800, cat:"inpatient", use:"Surgery / Central Sterile / ED", measured:true,
-   floorGSF:{1:15600,2:10600,3:10600}},
+   floorGSF:{1:15600,2:10600,3:10600}, keyLevels:3, keyGsf:36800, keyFloorGSF:{1:15600,2:10600,3:10600}},
   {id:"faceng", name:"Facilities Engineering", levels:2, gsf:12500, cat:"inpatient", use:"Central Utility Plant (CUP)", measured:true,
    floorGSF:{1:6400,2:6100}},
   {id:"occ",    name:"OCC",                    levels:4, gsf:50500, cat:"oncampus",  use:"On-campus ambulatory", measured:true,
-   floorGSF:{1:17800,2:10900,3:10900,4:10900}},
+   floorGSF:{1:17800,2:10900,3:10900,4:10900}, keyLevels:4, keyGsf:50500, keyFloorGSF:{1:17800,2:10900,3:10900,4:10900}},
   {id:"mob",    name:"MOB",                    levels:4, gsf:54100, cat:"oncampus",  use:"Medical office", measured:true,
-   floorGSF:{1:15000,2:13500,3:13500,4:12100}},
+   floorGSF:{1:15000,2:13500,3:13500,4:12100}, keyLevels:4, keyGsf:54100, keyFloorGSF:{1:15000,2:13500,3:13500,4:12100}},
   {id:"cfom",   name:"CFOM",                   levels:2, gsf:18000, cat:"oncampus",  use:"On-campus ambulatory", assumed:true},
   {id:"salt",   name:"Saltonstall",            levels:2, gsf:12000, cat:"oncampus",  use:"Administrative / support", assumed:true}
  ],
@@ -324,6 +337,8 @@ var S = {
  // ── Unit space program (32-bed Med/Surg module, from the workbook) ───
  module:{
    beds:{v:18, label:"Beds in the module"},
+   sliderMin:10,
+   sliderMax:35,
    rows:[
      {cat:"Public",            nsf:1070,  note:"Family waiting (32 seats), public & family toilets, nourishment, resource centre, 2 consult/quiet rooms"},
      {cat:"Patient Rooms",     nsf:11676, note:"28 standard + 2 airborne infection isolation + 2 bariatric private rooms, with toilet/shower, charting alcoves and ante rooms"},
@@ -381,7 +396,7 @@ var TABS = [
   {id:"assumptions", label:"Project Assumptions"},
   {id:"program",     label:"Inpatient Program"},
   {id:"floors",      label:"Floor Plans"},
-  {id:"recap",       label:"Bed Recap & Phasing"}
+  {id:"recap",       label:"Scenario & Phasing"}
 ];
 // The hash deep-links a tab (#program, #recap) so a view can be shared or printed directly.
 function tabFromHash(){
@@ -415,6 +430,13 @@ function darkenColor(hex,amt){
 }
 function bldg(id){ for(var i=0;i<S.buildings.length;i++){ if(S.buildings[i].id===id) return S.buildings[i]; } return null; }
 function bldgName(id){ var b=bldg(id); return b?b.name:id; }
+// The homepage inventory follows the composite Key Buildings SVGs at 1/8" scale.
+// The base levels/GSF remain available to the Floor Plans and stacking models,
+// which use the separate single-building drawing set.
+function invLevels(b){ return Number(b.keyLevels!=null?b.keyLevels:b.levels)||0; }
+function invGsf(b){ return Number(b.keyGsf!=null?b.keyGsf:b.gsf)||0; }
+function invFloorGsf(b){ return b.keyFloorGSF||b.floorGSF; }
+function invFloorLabel(b,k){ return b.keyFloorLabels&&b.keyFloorLabels[k]?b.keyFloorLabels[k]:"L"+k; }
 function exUnit(id){ for(var i=0;i<S.existing.length;i++){ if(S.existing[i].id===id) return S.existing[i]; } return null; }
 
 // ── Existing bed arithmetic ─────────────────────────────────────────
@@ -544,6 +566,18 @@ function kcard(label,val,cls,sub){
     sub?el("div",{class:"sm",style:"white-space:pre-line"},[sub]):null
   ]);
 }
+function numberStepper(inp,onDelta,grow){
+  var wrap=el("span",{class:"num-stepper"+(grow?" grow":"")});
+  wrap.appendChild(inp);
+  var arrows=el("span",{class:"step-arrows"});
+  [["▲",1,"Increase by 1"],["▼",-1,"Decrease by 1"]].forEach(function(spec){
+    var btn=el("button",{type:"button",class:"step-btn",title:spec[2] },[spec[0]]);
+    btn.addEventListener("click",function(e){ e.preventDefault(); e.stopPropagation(); onDelta(spec[1]); });
+    arrows.appendChild(btn);
+  });
+  wrap.appendChild(arrows);
+  return wrap;
+}
 function numField(obj,opts){
   opts=opts||{};
   var f = el("div",{class:"field"});
@@ -648,13 +682,13 @@ function buildSiteGraphic(which, opts){
     (polyEls[id]||[]).forEach(function(p){
       var t=p._tint;
       if(on){
-        p.setAttribute("fill-opacity", t? Math.min(0.95,(t.op===undefined?0.42:t.op)+0.2) : 0.16);
+        p.setAttribute("fill-opacity", t&&t.cover?1:(t?Math.min(0.95,(t.op===undefined?0.42:t.op)+0.2):0.16));
         p.setAttribute("stroke-opacity",G.outline?0:1);
-        p.setAttribute("stroke-width",G.outline?0:2.4);
+        p.setAttribute("stroke-width",t&&t.cover?10:(G.outline?0:2.4));
       } else {
         p.setAttribute("fill-opacity", t?(t.op===undefined?0.42:t.op):0);
-        p.setAttribute("stroke-opacity", t?0.9:0);
-        p.setAttribute("stroke-width", t?1.6:0);
+        p.setAttribute("stroke-opacity", t?(t.cover?1:0.9):0);
+        p.setAttribute("stroke-width", t?(t.cover?10:1.6):0);
       }
     });
     (outlineMaskEls[id]||[]).forEach(function(p){
@@ -675,9 +709,9 @@ function buildSiteGraphic(which, opts){
       poly.setAttribute("points",pts.map(function(p){return p[0]+","+p[1];}).join(" "));
       poly.setAttribute("fill", t?t.fill:RED);
       poly.setAttribute("fill-opacity", t?(t.op===undefined?0.42:t.op):0);
-      poly.setAttribute("stroke", t?darkenColor((t.fill||"#888").slice(0,7),0.35):RED);
-      poly.setAttribute("stroke-width", t?1.6:0);
-      poly.setAttribute("stroke-opacity", t?0.9:0);
+      poly.setAttribute("stroke", t?(t.cover?t.fill:darkenColor((t.fill||"#888").slice(0,7),0.35)):RED);
+      poly.setAttribute("stroke-width", t?(t.cover?10:1.6):0);
+      poly.setAttribute("stroke-opacity", t?(t.cover?1:0.9):0);
       poly.setAttribute("style","cursor:"+(opts.onclick?"pointer":"default")+";transition:fill-opacity .12s,stroke-opacity .12s");
       poly._tint=t;
       poly.addEventListener("mouseenter",function(){ setHi(b.id,true);  if(opts.onhover) opts.onhover(b.id); });
@@ -889,7 +923,7 @@ function tabAssumptions(){
   var site = buildSiteGraphic("axon",{
     fillHeight:true,
     zoom:true,
-    tooltip:function(id){ var b=bldg(id); return b.use+" · "+fmt(b.gsf)+" GSF"+(b.measured?" (measured)":" (assumed)"); },
+    tooltip:function(id){ var b=bldg(id); return b.use+" · "+fmt(invGsf(b))+" GSF"+(b.keyGsf!=null?" (Key Buildings · 1/8\")":(b.measured?" (single-building SVG)":" (assumed)")); },
     onhover:hoverRow,
     onclick:function(id){
       if(FLOOR_LEVELS && flPlanKey && flPlanKey(id,1)){ FL.building=id; state.tab="floors"; if(history.replaceState) history.replaceState(null,"","#floors"); render(); }
@@ -901,14 +935,18 @@ function tabAssumptions(){
 
   var tb = el("div");
   tb.appendChild(el("h2",null,["Campus Building Inventory"]));
+  tb.appendChild(el("div",{class:"fl",style:"margin:-5px 0 8px;font-size:10.5px"},[
+    "Key Buildings composite SVGs · 1/8\" = 1'-0\" · rounded to nearest 100 GSF. CUP, CFOM and Saltonstall retain their existing values."
+  ]));
   var tt = el("table",{class:"rates"});
   tt.appendChild(el("thead",null,[el("tr",null,[
     el("th",{class:"l"},["Building"]),el("th",null,["Levels"]),el("th",null,["GSF"])])]));
   var tbody = el("tbody");
   ["inpatient","oncampus"].forEach(function(cat){
-    var subtotal=0;
+    var gh=el("tr",{class:"inventory-group"});
+    gh.appendChild(el("td",{colspan:"3"},[cat==="inpatient"?"Inpatient hospital":"On-campus ambulatory"]));
+    tbody.appendChild(gh);
     S.buildings.filter(function(b){return b.cat===cat;}).forEach(function(b){
-      subtotal+=Number(b.gsf)||0;
       var r = el("tr");
       rowEls[b.id]=r;
       r.addEventListener("mouseenter",function(){ site.highlight(b.id); r.classList.add("sel"); });
@@ -923,44 +961,36 @@ function tabAssumptions(){
       // also carries a per-level breakdown, which is rescaled in proportion so
       // it keeps summing to whatever total is typed here.
       var lv=el("td",{class:"r"});
-      var li=el("input",{class:"input-line",type:"number",value:b.levels,style:"text-align:right",
-        title:b.measured?"Measured from the floor drawings — edit to override":"Planning assumption"});
+      var li=el("input",{class:"input-line",type:"number",value:invLevels(b),style:"text-align:right",
+        title:b.keyLevels!=null?"Counted from the composite Key Buildings SVG levels — edit to override":(b.measured?"Measured from the floor drawings — edit to override":"Planning assumption")});
       li.addEventListener("change",function(e){
-        b.levels=Math.max(1,Math.round(Number(e.target.value)||1)); render();
+        var n=Math.max(1,Math.round(Number(e.target.value)||1));
+        if(b.keyLevels!=null) b.keyLevels=n; else b.levels=n;
+        render();
       });
       lv.appendChild(li);
       r.appendChild(lv);
 
       var gd=el("td",{class:"r"});
-      var gi=el("input",{class:"input-line",type:"number",value:b.gsf,style:"text-align:right",
-        title:b.floorGSF
-          ? Object.keys(b.floorGSF).map(function(k){return "L"+k+": "+fmt(b.floorGSF[k])+" GSF";}).join("\n")
+      var invFloors=invFloorGsf(b), currentGsf=invGsf(b);
+      var gi=el("input",{class:"input-line",type:"number",value:currentGsf,style:"text-align:right",
+        title:invFloors
+          ? Object.keys(invFloors).map(function(k){return invFloorLabel(b,k)+": "+fmt(invFloors[k])+" GSF";}).join("\n")+(b.keyGsf!=null?"\nKey Buildings composite SVG · 1/8\" = 1'-0\"":"")
           : "Planning assumption"});
       gi.addEventListener("change",function(e){
-        var n=Math.max(0,Number(e.target.value)||0), was=Number(b.gsf)||0;
-        if(b.floorGSF && was>0){
+        var n=Math.max(0,Number(e.target.value)||0), was=invGsf(b), floors=invFloorGsf(b);
+        if(floors && was>0){
           var k=n/was;
-          Object.keys(b.floorGSF).forEach(function(l){ b.floorGSF[l]=Math.round(b.floorGSF[l]*k); });
+          Object.keys(floors).forEach(function(l){ floors[l]=Math.round(floors[l]*k); });
         }
-        b.gsf=n; render();
+        if(b.keyGsf!=null) b.keyGsf=n; else b.gsf=n;
+        render();
       });
       gd.appendChild(gi);
       r.appendChild(gd);
       tbody.appendChild(r);
     });
-    var sr=el("tr",{class:"subtot"});
-    var target = cat==="inpatient"?Number(S.portfolio.inpatient.v):Number(S.portfolio.oncampus.v);
-    var delta = subtotal-target;
-    sr.appendChild(el("td",null,[cat==="inpatient"?"Inpatient hospital":"On-campus ambulatory"]));
-    sr.appendChild(el("td",{class:"r"},[""]));
-    sr.appendChild(el("td",{class:"r",style:Math.abs(delta)>2000?"color:#c0392b":""},[fmt(subtotal)+(Math.abs(delta)>2000?" ("+(delta>0?"+":"")+fmt(delta)+" vs RFP)":"")]));
-    tbody.appendChild(sr);
   });
-  var gr = el("tr",{class:"grand"});
-  gr.appendChild(el("td",null,["Main campus total"]));
-  gr.appendChild(el("td",null,[""]));
-  gr.appendChild(el("td",{class:"r"},[fmt(S.buildings.reduce(function(a,b){return a+(Number(b.gsf)||0);},0))]));
-  tbody.appendChild(gr);
   tt.appendChild(tbody);
   tb.appendChild(tt);
   sect.appendChild(tb);
@@ -1097,7 +1127,8 @@ function tabProgram(){
       var td=el("td",{class:"r"});
       var i=el("input",{class:"cell r",value:u[f[0]]});
       i.addEventListener("change",function(e){ u[f[0]]=Math.max(0,Number(e.target.value)||0); render(); });
-      td.appendChild(i); r.appendChild(td);
+      td.appendChild(numberStepper(i,function(delta){ u[f[0]]=Math.max(0,(Number(u[f[0]])||0)+delta); render(); },true));
+      r.appendChild(td);
     });
     r.appendChild(el("td",{class:"r nsf"},[fmt(unitExistingBeds(u))]));
     r.appendChild(el("td",{class:"r",title:semiRooms(u)+" of these are semi-private"},[fmt(unitRooms(u))]));
@@ -1108,7 +1139,9 @@ function tabProgram(){
       ci.addEventListener("change",function(e){
         S.conversion[u.id]=Math.max(0,Math.min(semiRooms(u),Number(e.target.value)||0)); render();
       });
-      cw.appendChild(ci);
+      cw.appendChild(numberStepper(ci,function(delta){
+        S.conversion[u.id]=Math.max(0,Math.min(semiRooms(u),unitConverted(u)+delta)); render();
+      }));
       cw.appendChild(el("span",{style:"font-size:11px;font-weight:300;color:var(--faint);white-space:nowrap"},["of "+semiRooms(u)]));
       tdC.appendChild(cw);
     } else tdC.appendChild(el("span",{style:"color:var(--faint)"},["all private"]));
@@ -1120,7 +1153,9 @@ function tabProgram(){
     ai.addEventListener("change",function(e){
       S.added[u.id]=Math.max(0,Math.round(Number(e.target.value)||0)); render();
     });
-    aw.appendChild(ai);
+    aw.appendChild(numberStepper(ai,function(delta){
+      S.added[u.id]=Math.max(0,unitAdded(u)+delta); render();
+    }));
     if(unitConverted(u)>0 && unitAdded(u)!==unitHoldBeds(u)){
       aw.appendChild(el("button",{class:"seg sm",style:"font-size:9px;padding:0 4px;line-height:1.5",
         title:"Add "+unitHoldBeds(u)+" rooms so this unit keeps its "+unitExistingBeds(u)+" beds",
@@ -1204,7 +1239,8 @@ function tabProgram(){
   // ── 3. Space program module ──────────────────────────────────────
   var w3 = el("div",{class:"prog-cat"});
   var b3 = el("div",{class:"band",style:"background:#B6CDEF"});
-  b3.appendChild(el("span",{class:"bt"},["Unit Space Program — "+fmt(S.module.beds.v)+"-bed Med/Surg module"]));
+  var moduleCount=el("span",{class:"module-bed-count"},[fmt(S.module.beds.v)]);
+  b3.appendChild(el("span",{class:"bt"},["Unit Space Program — ",moduleCount,"-bed Med/Surg module"]));
   b3.appendChild(el("span",{class:"chain",html:
     "<b>"+fmt(moduleNSF())+"</b> NSF <span>× "+f2(S.grossing.nsf_dgsf.v)+"</span> <b>"+fmt(moduleNSF()*S.grossing.nsf_dgsf.v)+
     "</b> DGSF <span>× "+f2(S.grossing.dgsf_bgsf.v)+"</span> <b>"+fmt(moduleNSF()*S.grossing.nsf_dgsf.v*S.grossing.dgsf_bgsf.v)+"</b> BGSF"}));
@@ -1212,8 +1248,8 @@ function tabProgram(){
   w3.appendChild(el("div",{class:"cat-note"},[
     "Source: the InpatientBedProgram space program, drawn as a 32-room all-private Med/Surg unit (28 standard, 2 airborne infection isolation, 2 bariatric). Module beds is editable — set it to the unit size actually being planned and the whole area-per-bed chain, and every BGSF figure on the other tabs, follows. Adjust the NSF rows to match when you resize the module. Building support (linen chute, IDF, electrical) sits in the grossing factors, not in NSF; other unit types scale from this baseline by the factors below."
   ]));
+  w3.appendChild(moduleBedsSlider(moduleCount));
   var k3 = el("div",{class:"kpis"});
-  k3.appendChild(kcardEdit("Module beds", S.module.beds, 1));
   k3.appendChild(kcard("NSF / bed", fmt(nsfPerBed())));
   k3.appendChild(kcard("DGSF / bed", fmt(dgsfPerBed())));
   k3.appendChild(kcard("BGSF / bed", fmt(bgsfPerBed()), "hi"));
@@ -1340,6 +1376,37 @@ function kcardEdit(label, obj, min, sub){
 }
 // ── demand calculation ledger ───────────────────────────────────────
 // inlineNum renders a driver as an editable value inside a sentence
+function moduleBedsSlider(countEl){
+  var min=Math.max(1,Math.round(Number(S.module.sliderMin)||10));
+  var max=Math.max(min+1,Math.round(Number(S.module.sliderMax)||35));
+  var beds=Math.max(min,Math.min(max,Math.round(Number(S.module.beds.v)||18)));
+  S.module.sliderMin=min; S.module.sliderMax=max; S.module.beds.v=beds;
+  var wrap=el("div",{class:"module-slider"});
+  var minInp=el("input",{type:"number",class:"endpoint",value:min,title:"Slider minimum"});
+  var range=el("input",{type:"range",min:min,max:max,step:1,value:beds,title:"Beds in the Med/Surg module"});
+  var maxInp=el("input",{type:"number",class:"endpoint",value:max,title:"Slider maximum"});
+  minInp.addEventListener("change",function(e){
+    var n=Math.max(1,Math.round(Number(e.target.value)||min));
+    S.module.sliderMin=n;
+    if(n>=S.module.sliderMax) S.module.sliderMax=n+1;
+    S.module.beds.v=Math.max(S.module.sliderMin,Math.min(S.module.sliderMax,S.module.beds.v));
+    render();
+  });
+  maxInp.addEventListener("change",function(e){
+    var n=Math.max(2,Math.round(Number(e.target.value)||max));
+    S.module.sliderMax=n;
+    if(n<=S.module.sliderMin) S.module.sliderMin=Math.max(1,n-1);
+    S.module.beds.v=Math.max(S.module.sliderMin,Math.min(S.module.sliderMax,S.module.beds.v));
+    render();
+  });
+  range.addEventListener("input",function(e){
+    S.module.beds.v=Math.round(Number(e.target.value)||beds);
+    countEl.textContent=fmt(S.module.beds.v);
+  });
+  range.addEventListener("change",function(){ render(); });
+  wrap.appendChild(minInp); wrap.appendChild(range); wrap.appendChild(maxInp);
+  return wrap;
+}
 function inlineNum(key, w){
   var o = S.demand[key];
   var shown = o.pct? Math.round(o.v*1e6)/1e4 : o.v;
@@ -1354,7 +1421,12 @@ function inlineNum(key, w){
     var n=Number(String(e.target.value).replace(/[^0-9.\-]/g,""));
     if(!isNaN(n)&&n>=0){ o.v = o.pct? n/100 : n; render(); } else e.target.value=shown;
   });
-  wrap.appendChild(inp);
+  wrap.appendChild(numberStepper(inp,function(delta){
+    var current=o.pct?o.v*100:o.v;
+    var next=Math.max(0,Math.round((current+delta)*10000)/10000);
+    o.v=o.pct?next/100:next;
+    render();
+  }));
   if(o.pct) wrap.appendChild(el("span",{style:"font-size:11px;color:var(--mut)"},["%"]));
   return wrap;
 }

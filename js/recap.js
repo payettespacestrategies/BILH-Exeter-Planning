@@ -433,13 +433,13 @@ function rcLevelRow(b, lv){
 // ====================================================================
 // SITE PANEL — campus tinted by phase state at the current time
 // ====================================================================
-// Opacities are high because the vector base already paints the hospital a
-// saturated pink — the state colour has to overpower it, not blend with it.
+// State fills are fully opaque and use a same-colour expansion stroke so the
+// pink vector base cannot show through around the hand-traced polygon edges.
 var RC_STATE_COLORS = {
-  future:{fill:"#C9CCD2", op:0.85, label:"not started"},
-  active:{fill:"#FEB522", op:0.90, label:"under construction"},
-  done:  {fill:"#3CA09E", op:0.80, label:"complete"},
-  none:  {fill:"#ffffff", op:0.55, label:"no work in scope"}
+  future:{fill:"#C9CCD2", op:1, label:"not started"},
+  active:{fill:"#FEB522", op:1, label:"under construction"},
+  done:  {fill:"#3CA09E", op:1, label:"complete"},
+  none:  {fill:"#ffffff", op:1, label:"no work in scope"}
 };
 function rcBuildingState(id, t){
   var sc=rcScenario(), best="none";
@@ -466,7 +466,7 @@ function rcBuildSitePanel(c){
     tint:function(id){
       var s=rcBuildingState(id, sc.currentTime+1e-6);
       var cfg=RC_STATE_COLORS[s];
-      return {fill:cfg.fill, op:cfg.op};
+      return {fill:cfg.fill, op:cfg.op, cover:true};
     },
     // In a 330px panel only the buildings carrying beds or work earn a label.
     label:function(id){
@@ -500,9 +500,9 @@ var RC_KIND_COLOR = { reno:"#9EDDD1", infra:"#C2C3C8", fitout:"#FFE885", additio
 function rcBuildTimeline(c){
   c.innerHTML="";
   var sc=rcScenario();
-  var wrap=el("div",{class:"box",style:"padding:12px 16px;margin-bottom:16px"});
+  var wrap=el("div",{class:"box",style:"padding:16px 18px;margin-bottom:18px"});
   var hdr=el("div",{style:"display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px"});
-  hdr.appendChild(el("h3",{style:"margin:0"},["Construction Phasing"]));
+  hdr.appendChild(el("h3",{style:"margin:0;font-size:18px"},["Construction Phasing"]));
   hdr.appendChild(el("span",{class:"hint",style:"margin:0"},["Drag a bar's middle to move it, its edges to change duration — quarter-year steps."]));
   var endWrap=el("div",{style:"margin-left:auto;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700"});
   endWrap.appendChild(el("span",null,["Timeline to"]));
@@ -523,12 +523,12 @@ function rcBuildTimeline(c){
   hdr.appendChild(endWrap);
   wrap.appendChild(hdr);
 
-  var LBL_W=222;
-  var TL_W=Math.max(560, rcWidth()-36);
+  var LBL_W=270;
+  var TL_W=Math.max(840, rcWidth()-4);
   var TW=TL_W-LBL_W;
-  var ROWH=26, TOP=26;
+  var ROWH=38, TOP=34;
   var sp=rcTimelineSpan(), span=sp.b-sp.a;
-  var H=TOP+ROWH*sc.phases.length+26;
+  var H=TOP+ROWH*sc.phases.length+32;
   function xOf(v){ return LBL_W+(v-sp.a)/span*TW; }
 
   var tl=el("div",{style:"position:relative;width:"+TL_W+"px;height:"+H+"px;user-select:none"});
@@ -536,22 +536,22 @@ function rcBuildTimeline(c){
   for(var q=0;q<=span*4+1e-9;q++){
     var v=sp.a+q/4, isYear=(Math.abs(v-Math.round(v))<1e-9);
     var gx=xOf(v);
-    tl.appendChild(el("div",{style:"position:absolute;left:"+gx+"px;top:"+TOP+"px;bottom:22px;width:1px;background:"+(isYear?"var(--line2)":"var(--line)")}));
+    tl.appendChild(el("div",{style:"position:absolute;left:"+gx+"px;top:"+TOP+"px;bottom:28px;width:1px;background:"+(isYear?"var(--line2)":"var(--line)")}));
     if(isYear){
-      tl.appendChild(el("div",{style:"position:absolute;left:"+gx+"px;bottom:0;transform:translateX(-50%);font-size:12px;font-weight:700;color:var(--mut)"},[String(Math.round(v))]));
+      tl.appendChild(el("div",{style:"position:absolute;left:"+gx+"px;bottom:0;transform:translateX(-50%);font-size:14px;font-weight:800;color:var(--mut)"},[String(Math.round(v))]));
     }
   }
-  tl.appendChild(el("div",{style:"position:absolute;left:0;width:"+(LBL_W-10)+"px;bottom:0;font-size:12px;font-weight:900;color:var(--mut);text-align:right"},["Year"]));
+  tl.appendChild(el("div",{style:"position:absolute;left:0;width:"+(LBL_W-12)+"px;bottom:0;font-size:14px;font-weight:900;color:var(--mut);text-align:right"},["Year"]));
 
   sc.phases.forEach(function(p,pi){
     var rowY=TOP+pi*ROWH;
     var lab=el("div",{style:[
-      "position:absolute","left:0","width:"+(LBL_W-10)+"px","top:"+rowY+"px","height:"+(ROWH-6)+"px",
+      "position:absolute","left:0","width:"+(LBL_W-12)+"px","top:"+rowY+"px","height:"+(ROWH-8)+"px",
       "display:flex","align-items:center","justify-content:flex-end","gap:6px",
-      "font-size:11.5px","font-weight:700","color:"+(p.enabled?"var(--ink)":"var(--faint)"),
+      "font-size:13.5px","font-weight:800","color:"+(p.enabled?"var(--ink)":"var(--faint)"),
       "text-align:right","overflow:hidden","white-space:nowrap"
     ].join(";")});
-    var cb=el("input",{type:"checkbox",style:"width:12px;height:12px;accent-color:#233044;cursor:pointer;flex:none"});
+    var cb=el("input",{type:"checkbox",style:"width:15px;height:15px;accent-color:#233044;cursor:pointer;flex:none"});
     cb.checked=!!p.enabled;
     cb.addEventListener("change",function(e){ p.enabled=e.target.checked; rcRebuild(); });
     lab.appendChild(el("span",{style:"overflow:hidden;text-overflow:ellipsis"},[p.name]));
@@ -566,10 +566,10 @@ function rcBuildTimeline(c){
             (p.obsAfter? "\n+"+p.obsAfter+" observation beds on completion":""),
       style:[
         "position:absolute","left:"+xOf(p.start)+"px","top:"+rowY+"px",
-        "width:"+Math.max(6,xOf(rcPhaseEnd(p))-xOf(p.start))+"px","height:"+(ROWH-8)+"px",
+        "width:"+Math.max(6,xOf(rcPhaseEnd(p))-xOf(p.start))+"px","height:"+(ROWH-10)+"px",
         "background:"+col,"border:1px solid "+darkenColor(col,0.32),
         "cursor:grab","box-sizing:border-box","display:flex","align-items:center","padding:0 5px",
-        "font-size:10px","font-weight:900","color:rgba(35,48,68,.8)","overflow:hidden","white-space:nowrap"
+        "font-size:12px","font-weight:900","color:rgba(35,48,68,.8)","overflow:hidden","white-space:nowrap"
       ].join(";")
     },[ rcPhaseUnitBeds(p)? "−"+rcPhaseUnitBeds(p)+" beds" : (p.obsAfter? "+"+p.obsAfter+" obs" : "") ]);
     var lh=el("div",{style:"position:absolute;left:-4px;top:0;bottom:0;width:9px;cursor:ew-resize"});
@@ -613,9 +613,9 @@ function rcBuildTimeline(c){
 
   // current-time flag
   var cx=xOf(sc.currentTime);
-  var line=el("div",{style:"position:absolute;left:"+cx+"px;top:"+(TOP-4)+"px;bottom:22px;width:2px;background:#233044;z-index:5;pointer-events:none"});
+  var line=el("div",{style:"position:absolute;left:"+cx+"px;top:"+(TOP-4)+"px;bottom:28px;width:2px;background:#233044;z-index:5;pointer-events:none"});
   var flag=el("div",{title:"Drag to move through the programme (quarter steps)",
-    style:"position:absolute;left:"+cx+"px;top:0;transform:translateX(-50%);background:#233044;color:#fff;font-size:11px;font-weight:900;padding:2px 8px;cursor:ew-resize;white-space:nowrap;z-index:6"
+    style:"position:absolute;left:"+cx+"px;top:0;transform:translateX(-50%);background:#233044;color:#fff;font-size:12.5px;font-weight:900;padding:3px 9px;cursor:ew-resize;white-space:nowrap;z-index:6"
   },[rcFmtYQ(sc.currentTime)]);
   flag.addEventListener("mousedown",function(e){
     e.stopPropagation(); e.preventDefault();
@@ -635,7 +635,9 @@ function rcBuildTimeline(c){
     document.addEventListener("mouseup",onUp);
   });
   tl.appendChild(line); tl.appendChild(flag);
-  wrap.appendChild(tl);
+  var tlViewport=el("div",{style:"overflow-x:auto;padding-bottom:2px"});
+  tlViewport.appendChild(tl);
+  wrap.appendChild(tlViewport);
 
   var lg=el("div",{class:"legend",style:"margin-top:6px;font-size:11px"});
   [["reno","Patient-unit renovation"],["fitout","Fit-out of new use"],["infra","Enabling / infrastructure"],["addition","Addition"]].forEach(function(p){

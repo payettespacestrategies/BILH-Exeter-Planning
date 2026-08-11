@@ -94,7 +94,7 @@ The 2026-08-10 drawing package (`Burlington Updated/Site&Floor`) replaced the pl
   floor plans jumps to its Floor Plans view.
 - **Measured floor plates** for OCC, MOB, Perry, West Wing and Northwest Wing, from the 1/8"-scale
   outline SVGs (`assets/floors/`). These flip their inventory rows from *assumed* to *measured*
-  (per-level GSF in the tooltip) and drive the stacking capacities on the Bed Recap tab.
+  (per-level GSF in the tooltip) and drive the stacking capacities on the Scenario & Phasing tab.
 - **New Floor Plans tab** — the Burlington Site Scenarios interaction rebuilt for Exeter. Left panel:
   program blocks with true-to-area swatches — the existing units (+ observation) are ready-made; each
   unit type band has a “+” that adds a new block sized by an editable beds field (beds × BGSF/room),
@@ -124,7 +124,7 @@ The 2026-08-10 drawing package (`Burlington Updated/Site&Floor`) replaced the pl
 | **Project Assumptions** | RFP hard constraints, the interactive campus axon + plan with hover-synced building inventory (measured vs assumed chips, reconciliation against the RFP portfolio totals), grossing chain, order-of-magnitude cost model, procurement schedule. |
 | **Inpatient Program** | Figure 2 bed count verbatim with per-unit private-conversion control; the demand model sizing licensed beds + the observation unit; the 32-bed Med/Surg space program converting rooms to area. |
 | **Floor Plans** | The placement tool on the real floor plates (West, NW, Perry, OCC, MOB — East series pending). |
-| **Bed Recap & Phasing** | Stacking (against measured plates where available), campus plan tinted by phase state, draggable phasing timeline, bed gain/loss chart vs licence + operating floor, phase schedule with costs. |
+| **Scenario & Phasing** | Stacking (against measured plates where available), campus plan tinted by phase state, draggable phasing timeline, bed gain/loss chart vs licence + operating floor, phase schedule with costs. |
 
 ## The arithmetic that matters
 
@@ -144,7 +144,7 @@ index.html              shell, styles, state, Assumptions + Inpatient Program ta
 js/site-graphic.js      generated: viewBox crops, per-building hover polygons, label anchors
 js/floor-plans.js       generated: per-level file refs, measured GSF/usable SF, 3-ft cell masks
 js/floors-tab.js        Floor Plans tab (placement tool)
-js/recap.js             Bed Recap & Phasing tab
+js/recap.js             Scenario & Phasing tab
 assets/site/            vector site plan + axon (2026-08-10 package)
 assets/floors/          1/8"-scale floor outline SVGs (2026-08-10 package)
 assets/source/          RFP + the two program workbooks
