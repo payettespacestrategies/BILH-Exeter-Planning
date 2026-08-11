@@ -2,10 +2,21 @@
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6973.28 5874.38">
   <defs>
     <style>
-    .cls-1 { fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 26px; }
-    .cls-2 { fill: none; stroke: #aab2bd; stroke-miterlimit: 10; stroke-width: 13px; stroke-dasharray: 46 34; }
-    .cls-3 { fill: #c6c6c6; }
-  </style>
+      .cls-1, .cls-2 {
+        fill: none;
+        stroke: #000;
+        stroke-miterlimit: 10;
+        stroke-width: 4px;
+      }
+
+      .cls-2 {
+        stroke-dasharray: 0 0 0 0 0 0 20 20 20 0 0 0;
+      }
+
+      .cls-3 {
+        fill: #c6c6c6;
+      }
+    </style>
   </defs>
   <g id="EAST_WING_L3" data-name="EAST WING L3">
     <g id="Layer_6" data-name="Layer 6">

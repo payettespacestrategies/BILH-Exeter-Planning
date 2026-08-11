@@ -6,6 +6,34 @@ dashboard (`Burlington Plans`, v0.5) — same visual system, export/import and p
 
 **Open `index.html` in a browser.** Everything is offline and self-contained.
 
+## v0.4 (2026-08-11)
+
+- **Hold the bed count by adding rooms.** Converting a semi-private room to private
+  costs a licensed bed and frees no area. The bed table now has an **Add rooms** column
+  and an **Added BGSF** column: add private rooms to win those beds back, and see exactly
+  what new area that needs. "Hold bed count" fills every unit in one click — full
+  conversion at a constant 100 beds costs **~25,400 BGSF** of new build.
+- **The demand model is now a calculation ledger.** One numbered row per equation, the
+  editable inputs sitting inside the sentence that uses them and the value they produce on
+  the right, in three blocks (inpatient beds, observation beds, supply against demand).
+  The arithmetic is followable step by step instead of being split between a driver grid
+  and a row of result cards.
+- Administrative Office program carried over from the Burlington dashboard, at the bottom
+  of the Inpatient Program tab.
+- Key Buildings is the default Floor Plans view; its campus drawings now use a bold black
+  outline for buildings on the level and a light grey dashed ghost for those that are not,
+  with names set clear of the linework.
+- Home page: Source column, field notes and card captions removed (notes are tooltips now);
+  the campus map matches the inventory table's height, centres itself and supports
+  scroll-to-zoom / drag-to-pan / double-click-reset.
+
+**Known drawing issue:** `LEVEL 3.svg` and `LEVEL 4.svg` in the supplied campus set are
+byte-identical, and that one drawing carries East Wing L2 + West Wing L1. Campus Level 3
+therefore draws the wrong East plate and Level 4 the wrong West plate — flagged in the card
+header as *drawing mismatch*. It also explains why Perry appears on Level 4 with no program:
+Perry has three levels, and that plate is Level 3's. It needs the missing drawing; no
+transform can correct it.
+
 ## v0.3 (2026-08-11) — East Wing, CUP, exact hover shapes
 
 - **East Wing** (4 levels) and **CUP / Facilities Engineering** (2 levels) added from the 11 Aug

@@ -172,9 +172,9 @@ footer{ margin-top:30px; padding-top:14px; border-top:1px solid var(--line); fon
 </footer>
 </div>
 
-<script src="js/site-graphic.js?v=2.9"></script>
-<script src="js/floor-plans.js?v=2.9"></script>
-<script src="js/key-buildings-data.js?v=2.9"></script>
+<script src="js/site-graphic.js?v=3.5"></script>
+<script src="js/floor-plans.js?v=3.5"></script>
+<script src="js/key-buildings-data.js?v=3.5"></script>
 <script>
 // ====================================================================
 // HEALTHCARE COLOR CATALOG  (PAYETTE_HEALTHCARE_PLAN_COLORS 03/11/2022)
@@ -229,7 +229,7 @@ var S = {
    name:"BILH-Exeter Hospital — Inpatient Bed Recapitalization Dashboard",
    client:"Beth Israel Lahey Health",
    location:"Exeter, NH",
-   version:"v0.3 · 2026-08-11",
+   version:"v0.4 · 2026-08-11",
    generated:"2026-08-11"
  },
 
@@ -335,6 +335,10 @@ var S = {
  // Private-room conversion strategy — how many semi-private ROOMS convert
  conversion:{ W4:7, E4A:6, E4B:6 },
 
+ // New private rooms added per unit to hold the bed count. Empty by default so
+ // the table opens on the RFP's own position: convert and lose the beds.
+ added:{},
+
  // ── Administrative Office program ───────────────────────────────────
  // Carried over unchanged from the Burlington dashboard. It sizes the
  // administrative space that relocation may have to rehouse, and is kept
@@ -415,20 +419,33 @@ function unitExistingBeds(u){ return (Number(u.single)||0)+(Number(u.dbl)||0); }
 // a semi-private room becomes a private room in the same footprint, one bed lighter.
 function unitRooms(u){ return (Number(u.single)||0)+semiRooms(u); }
 function unitConverted(u){ var c=S.conversion[u.id]; return Math.min(semiRooms(u), Math.max(0, Number(c)||0)); }
-function unitProposedBeds(u){ return unitExistingBeds(u)-unitConverted(u); }
-function unitPrivateBeds(u){ return (Number(u.single)||0)+unitConverted(u); }
+// New private rooms built to win back the beds that conversion gives up. These
+// are the only thing on this table that costs floor area — every one of them
+// needs a room's worth of BGSF that the existing plate does not have.
+function unitAdded(u){ return Math.max(0, Math.round(Number(S.added[u.id])||0)); }
+function unitRoomsAfter(u){ return unitRooms(u)+unitAdded(u); }
+function unitProposedBeds(u){ return unitExistingBeds(u)-unitConverted(u)+unitAdded(u); }
+function unitPrivateBeds(u){ return (Number(u.single)||0)+unitConverted(u)+unitAdded(u); }
+function unitAddedGSF(u){ return bgsfForRooms(u.type, unitAdded(u)); }
+// rooms to add so this unit ends with the bed count it has today
+function unitHoldBeds(u){ return unitConverted(u); }
 function existingTotals(){
-  var t={single:0,dbl:0,beds:0,semiRooms:0,rooms:0,converted:0,proposed:0,private:0,gsf:0};
+  var t={single:0,dbl:0,beds:0,semiRooms:0,rooms:0,converted:0,added:0,roomsAfter:0,
+         proposed:0,private:0,gsf:0,addedGsf:0};
   S.existing.forEach(function(u){
     t.single+=Number(u.single)||0; t.dbl+=Number(u.dbl)||0;
     t.beds+=unitExistingBeds(u); t.semiRooms+=semiRooms(u);
     t.rooms+=unitRooms(u);
-    t.converted+=unitConverted(u); t.proposed+=unitProposedBeds(u);
+    t.converted+=unitConverted(u); t.added+=unitAdded(u);
+    t.roomsAfter+=unitRoomsAfter(u);
+    t.proposed+=unitProposedBeds(u);
     t.private+=unitPrivateBeds(u);
-    t.gsf+=bgsfForRooms(u.type, unitRooms(u));
+    t.gsf+=bgsfForRooms(u.type, unitRoomsAfter(u));
+    t.addedGsf+=unitAddedGSF(u);
   });
   t.privatePct = t.proposed? t.private/t.proposed : 0;
   t.existingPrivatePct = t.beds? t.single/t.beds : 0;
+  t.bedDelta = t.proposed-t.beds;
   return t;
 }
 
@@ -517,7 +534,8 @@ function kcard(label,val,cls,sub){
   return el("div",{class:"card"+(cls?" "+cls:"")},[
     el("div",{class:"lab"},[label]),
     el("div",{class:"big"},[val]),
-    sub?el("div",{class:"sm"},[sub]):null
+    // a "\n" in the sub-line breaks it onto its own row
+    sub?el("div",{class:"sm",style:"white-space:pre-line"},[sub]):null
   ]);
 }
 function numField(obj,opts){
@@ -539,7 +557,8 @@ function numField(obj,opts){
   ln.appendChild(inp);
   if(obj.pct) ln.appendChild(el("span",null,["%"]));
   f.appendChild(ln);
-  if(obj.note) f.appendChild(el("div",{class:"hint"},[obj.note]));
+  // notes are kept as tooltips rather than grey paragraphs under every field
+  if(obj.note){ if(opts.noNote) f.title=obj.note; else f.appendChild(el("div",{class:"hint"},[obj.note])); }
   return f;
 }
 
@@ -841,9 +860,10 @@ function tabAssumptions(){
 
   // Headline constraints
   var hd = el("div",{class:"cards",style:"margin-bottom:22px"});
-  hd.appendChild(kcard("Licensed beds", fmt(S.constraints.licensed_beds.v), "hi", "hard ceiling — RFP, Project Vision"));
-  hd.appendChild(kcard("Capital hard cap", money(S.constraints.budget_cap.v), "hi", "Definitive Agreement commitment"));
-  hd.appendChild(kcard("Existing beds", fmt(t.beds), null, fmt(t.single)+" private · "+fmt(t.dbl)+" in "+fmt(t.semiRooms)+" semi-private rooms"));
+  hd.appendChild(kcard("Licensed beds", fmt(S.constraints.licensed_beds.v), "hi"));
+  hd.appendChild(kcard("Capital hard cap", money(S.constraints.budget_cap.v), "hi"));
+  hd.appendChild(kcard("Existing beds", fmt(t.beds), null,
+    fmt(t.single)+" private inpatient rooms\n"+fmt(t.dbl)+" beds in "+fmt(t.semiRooms)+" semi-private rooms"));
   hd.appendChild(kcard("Existing private %", Math.round(t.existingPrivatePct*100)+"%", null, "primary objective is to raise this"));
   hd.appendChild(kcard("Hospital portfolio", fmt(S.portfolio.inpatient.v)+" SF", null, "+ "+fmt(S.portfolio.oncampus.v)+" SF on-campus ambulatory"));
   hd.appendChild(kcard("Study duration", fmt(S.constraints.study_months.v)+" months", null, "from NTP, 10 Aug 2026"));
@@ -877,7 +897,7 @@ function tabAssumptions(){
   tb.appendChild(el("h2",null,["Campus Building Inventory"]));
   var tt = el("table",{class:"rates"});
   tt.appendChild(el("thead",null,[el("tr",null,[
-    el("th",{class:"l"},["Building"]),el("th",null,["Levels"]),el("th",null,["GSF"]),el("th",null,["Source"])])]));
+    el("th",{class:"l"},["Building"]),el("th",null,["Levels"]),el("th",null,["GSF"])])]));
   var tbody = el("tbody");
   ["inpatient","oncampus"].forEach(function(cat){
     var subtotal=0;
@@ -911,11 +931,6 @@ function tabAssumptions(){
         gd.appendChild(gi);
       }
       r.appendChild(gd);
-      r.appendChild(el("td",{class:"r"},[
-        el("span",{class:"assumed",style:b.measured?"color:#1c6d5a;background:#e7f4ef;border-color:#bcdcd0":"",
-          title:b.measured?"Measured from the 1/8\"-scale floor outline SVGs":"Planning assumption — replace with BILH data"},
-          [b.measured?"measured":"assumed"])
-      ]));
       tbody.appendChild(r);
     });
     var sr=el("tr",{class:"subtot"});
@@ -924,14 +939,12 @@ function tabAssumptions(){
     sr.appendChild(el("td",null,[cat==="inpatient"?"Inpatient hospital":"On-campus ambulatory"]));
     sr.appendChild(el("td",{class:"r"},[""]));
     sr.appendChild(el("td",{class:"r",style:Math.abs(delta)>2000?"color:#c0392b":""},[fmt(subtotal)+(Math.abs(delta)>2000?" ("+(delta>0?"+":"")+fmt(delta)+" vs RFP)":"")]));
-    sr.appendChild(el("td",null,[""]));
     tbody.appendChild(sr);
   });
   var gr = el("tr",{class:"grand"});
   gr.appendChild(el("td",null,["Main campus total"]));
   gr.appendChild(el("td",null,[""]));
   gr.appendChild(el("td",{class:"r"},[fmt(S.buildings.reduce(function(a,b){return a+(Number(b.gsf)||0);},0))]));
-  gr.appendChild(el("td",null,[""]));
   tbody.appendChild(gr);
   tt.appendChild(tbody);
   tb.appendChild(tt);
@@ -940,16 +953,10 @@ function tabAssumptions(){
 
   // Grossing
   var gb = el("div",{class:"box",style:"margin-bottom:22px"});
-  gb.appendChild(el("h3",null,["Grossing — NSF → DGSF → BGSF"]));
-  gb.appendChild(el("p",{class:"hint",style:"margin:2px 0 12px"},[
-    "Taken from the 32-bed Med/Surg space program workbook so the area-per-bed arithmetic on the Inpatient Program tab traces back to a real program."
-  ]));
+  gb.appendChild(el("h3",{style:"margin-bottom:12px"},["Grossing — NSF → DGSF → BGSF"]));
   var gg = el("div",{style:"display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px"});
-  ["nsf_dgsf","dgsf_bgsf"].forEach(function(k){ gg.appendChild(numField(S.grossing[k],{step:"0.01",min:0.1})); });
+  ["nsf_dgsf","dgsf_bgsf"].forEach(function(k){ gg.appendChild(numField(S.grossing[k],{step:"0.01",min:0.1,noNote:true})); });
   gb.appendChild(gg);
-  gb.appendChild(el("p",{class:"hint",style:"margin-top:14px"},[
-    "Current chain: "+fmt(nsfPerBed())+" NSF / bed × "+f2(S.grossing.nsf_dgsf.v)+" = "+fmt(dgsfPerBed())+" DGSF / bed × "+f2(S.grossing.dgsf_bgsf.v)+" = "+fmt(bgsfPerBed())+" BGSF / bed (Med/Surg baseline)."
-  ]));
   v.appendChild(gb);
 
   // Constraints + cost
@@ -957,17 +964,14 @@ function tabAssumptions(){
   var cb = el("div",{class:"box"});
   cb.appendChild(el("h3",null,["Planning constraints"]));
   var cg = el("div",{style:"display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:10px"});
-  ["licensed_beds","budget_cap","study_months","min_operating_beds"].forEach(function(k){ cg.appendChild(numField(S.constraints[k])); });
+  ["licensed_beds","budget_cap","study_months","min_operating_beds"].forEach(function(k){ cg.appendChild(numField(S.constraints[k],{noNote:true})); });
   cb.appendChild(cg);
   two.appendChild(cb);
 
   var kb = el("div",{class:"box"});
-  kb.appendChild(el("h3",null,["Order-of-magnitude cost model"]));
-  kb.appendChild(el("p",{class:"hint",style:"margin:2px 0 10px"},[
-    "The CM prepares the estimate; this model only tests whether a scenario is plausibly inside the $"+fmt(S.constraints.budget_cap.v)+"M cap. Areas come from the phases on the Bed Recap tab."
-  ]));
+  kb.appendChild(el("h3",{style:"margin-bottom:10px"},["Order-of-magnitude cost model"]));
   var kg = el("div",{style:"display:grid;grid-template-columns:1fr 1fr;gap:16px"});
-  ["reno_psf","new_psf","infra_pct","soft_pct","contingency_pct","escalation"].forEach(function(k){ kg.appendChild(numField(S.cost[k],{step:"0.01"})); });
+  ["reno_psf","new_psf","infra_pct","soft_pct","contingency_pct","escalation"].forEach(function(k){ kg.appendChild(numField(S.cost[k],{step:"0.01",noNote:true})); });
   kb.appendChild(kg);
   two.appendChild(kb);
   v.appendChild(two);
@@ -1019,7 +1023,15 @@ function tabProgram(){
   var b1 = el("div",{class:"band",style:"background:#9EDDD1"});
   b1.appendChild(el("span",{class:"bt"},["Existing Beds & Private-Room Conversion"]));
   b1.appendChild(el("span",{class:"chain",html:
-    "<b>"+fmt(t.beds)+"</b> beds today <span>−</span> <b>"+fmt(t.converted)+"</b> converted rooms <span>=</span> <b>"+fmt(t.proposed)+"</b> beds <span>at</span> <b>"+Math.round(t.privatePct*100)+"%</b> private"}));
+    "<b>"+fmt(t.beds)+"</b> today <span>−</span> <b>"+fmt(t.converted)+"</b> converted <span>+</span> <b>"+fmt(t.added)+"</b> new rooms <span>=</span> <b>"+fmt(t.proposed)+"</b> beds <span>at</span> <b>"+Math.round(t.privatePct*100)+"%</b> private"}));
+  b1.appendChild(el("button",{class:"seg sm",style:"background:rgba(255,255,255,.75)",
+    title:"Add exactly enough new private rooms in each unit to finish with the bed count it has today",
+    onclick:function(){ S.existing.forEach(function(u){ S.added[u.id]=unitHoldBeds(u); }); render(); }},["Hold bed count"]));
+  if(t.added){
+    b1.appendChild(el("button",{class:"seg sm",style:"background:rgba(255,255,255,.75)",
+      title:"Remove every added room",
+      onclick:function(){ S.added={}; render(); }},["Clear added"]));
+  }
   w1.appendChild(b1);
   w1.appendChild(el("div",{class:"cat-note"},[
     "Figure 2 of the RFP, verbatim. “Double” counts beds in semi-private rooms — two beds per room — so every room converted to private removes exactly one licensed bed. Set the rooms to convert per unit in the Convert column. Note that the room count, and therefore the floor area, does not change: conversion buys private rooms with licensed beds, not with square feet."
@@ -1028,11 +1040,12 @@ function tabProgram(){
   k1.appendChild(kcard("Beds today", fmt(t.beds), null, fmt(t.rooms)+" patient rooms"));
   k1.appendChild(kcard("Semi-private rooms", fmt(t.semiRooms), null, fmt(t.dbl)+" beds"));
   k1.appendChild(kcard("Rooms converted", fmt(t.converted)));
-  k1.appendChild(kcard("Beds after conversion", fmt(t.proposed), t.proposed>Number(S.constraints.licensed_beds.v)?"bad":"hi",
-    (Number(S.constraints.licensed_beds.v)-t.proposed)+" under the license"));
-  k1.appendChild(kcard("Licensed beds given up", fmt(t.beds-t.proposed), "warn", "licence headroom — no floor area released"));
+  k1.appendChild(kcard("Rooms added", fmt(t.added), t.added?"hi":null, t.added?"new build":"none — beds are given up"));
+  k1.appendChild(kcard("Beds after", fmt(t.proposed), t.proposed>Number(S.constraints.licensed_beds.v)?"bad":"hi",
+    t.bedDelta===0? "bed count held" : (t.bedDelta>0? "+"+fmt(t.bedDelta)+" vs today" : fmt(-t.bedDelta)+" given up")));
   k1.appendChild(kcard("Private rooms", Math.round(t.privatePct*100)+"%", "hi", "from "+Math.round(t.existingPrivatePct*100)+"% today"));
-  k1.appendChild(kcard("Inpatient BGSF", fmt(t.gsf), null, "unchanged by conversion"));
+  k1.appendChild(kcard("Added BGSF", fmt(t.addedGsf), t.addedGsf?"warn":null, t.addedGsf?"must be built or repurposed":"no new area"));
+  k1.appendChild(kcard("Inpatient BGSF", fmt(t.gsf), null, fmt(t.roomsAfter)+" rooms total"));
   w1.appendChild(k1);
 
   var tb1 = el("table",{class:"prog"});
@@ -1043,8 +1056,10 @@ function tabProgram(){
     el("th",{class:"r",style:"width:60px"},["Beds"]),
     el("th",{class:"r",style:"width:60px"},["Rooms"]),
     el("th",{class:"r",style:"width:96px"},["Convert rooms"]),
+    el("th",{class:"r",style:"width:82px"},["Add rooms"]),
     el("th",{class:"r",style:"width:74px"},["Beds after"]),
     el("th",{class:"r",style:"width:70px"},["Private %"]),
+    el("th",{class:"r",style:"width:88px"},["Added BGSF"]),
     el("th",{class:"r",style:"width:82px"},["BGSF"])
   ])]));
   var tb1b = el("tbody");
@@ -1083,10 +1098,30 @@ function tabProgram(){
       tdC.appendChild(cw);
     } else tdC.appendChild(el("span",{style:"color:var(--faint)"},["all private"]));
     r.appendChild(tdC);
-    r.appendChild(el("td",{class:"r nsf"},[fmt(unitProposedBeds(u))]));
+    var tdA=el("td",{class:"r"});
+    var aw=el("div",{style:"display:flex;align-items:baseline;justify-content:flex-end;gap:4px"});
+    var ai=el("input",{class:"cell r",style:"width:30px",value:unitAdded(u),
+      title:"New private rooms built in this unit — each adds a bed and needs a room's worth of new area"});
+    ai.addEventListener("change",function(e){
+      S.added[u.id]=Math.max(0,Math.round(Number(e.target.value)||0)); render();
+    });
+    aw.appendChild(ai);
+    if(unitConverted(u)>0 && unitAdded(u)!==unitHoldBeds(u)){
+      aw.appendChild(el("button",{class:"seg sm",style:"font-size:9px;padding:0 4px;line-height:1.5",
+        title:"Add "+unitHoldBeds(u)+" rooms so this unit keeps its "+unitExistingBeds(u)+" beds",
+        onclick:function(){ S.added[u.id]=unitHoldBeds(u); render(); }},["hold"]));
+    }
+    tdA.appendChild(aw);
+    r.appendChild(tdA);
+    var bdelta=unitProposedBeds(u)-unitExistingBeds(u);
+    r.appendChild(el("td",{class:"r nsf",style:bdelta===0?"":"color:"+(bdelta>0?"#1c6d5a":"#c07f00"),
+      title:bdelta===0?"same as today":(bdelta>0?"+"+bdelta+" vs today":bdelta+" vs today")},[fmt(unitProposedBeds(u))]));
     r.appendChild(el("td",{class:"r"},[Math.round(unitPrivateBeds(u)/Math.max(1,unitProposedBeds(u))*100)+"%"]));
-    r.appendChild(el("td",{class:"r",title:"Rooms × "+fmt(bgsfPerBed()*(Number(S.typeFactors[u.type])||1))+" BGSF — unchanged by conversion"},
-      [fmt(bgsfForRooms(u.type,unitRooms(u)))]));
+    r.appendChild(el("td",{class:"r",style:unitAdded(u)?"color:#c07f00;font-weight:900":"color:var(--faint)",
+      title:unitAdded(u)?unitAdded(u)+" new rooms × "+fmt(bgsfPerBed()*(Number(S.typeFactors[u.type])||1))+" BGSF":""},
+      [unitAdded(u)?"+"+fmt(unitAddedGSF(u)):"—"]));
+    r.appendChild(el("td",{class:"r",title:fmt(unitRoomsAfter(u))+" rooms × "+fmt(bgsfPerBed()*(Number(S.typeFactors[u.type])||1))+" BGSF"},
+      [fmt(bgsfForRooms(u.type,unitRoomsAfter(u)))]));
     tb1b.appendChild(r);
   });
   var tr1 = el("tr",{class:"totalrow"});
@@ -1097,8 +1132,10 @@ function tabProgram(){
   tr1.appendChild(el("td",{class:"r"},[fmt(t.beds)]));
   tr1.appendChild(el("td",{class:"r"},[fmt(t.rooms)]));
   tr1.appendChild(el("td",{class:"r"},[fmt(t.converted)+" of "+fmt(t.semiRooms)]));
+  tr1.appendChild(el("td",{class:"r"},[fmt(t.added)]));
   tr1.appendChild(el("td",{class:"r"},[fmt(t.proposed)]));
   tr1.appendChild(el("td",{class:"r"},[Math.round(t.privatePct*100)+"%"]));
+  tr1.appendChild(el("td",{class:"r",style:t.addedGsf?"color:#c07f00":""},[t.addedGsf?"+"+fmt(t.addedGsf):"—"]));
   tr1.appendChild(el("td",{class:"r"},[fmt(t.gsf)]));
   tb1b.appendChild(tr1);
   tb1.appendChild(tb1b);
@@ -1115,23 +1152,10 @@ function tabProgram(){
   w2.appendChild(el("div",{class:"cat-note"},[
     "The RFP's four drivers, made arithmetic: a dedicated observation unit for short-stay patients, fewer avoidable inpatient admissions, and capacity matched to level of care. Avoided admissions are re-cast as observation cases rather than disappearing. Volumes are placeholders until BILH provides actuals."
   ]));
-  var dg = el("div",{class:"drivers"});
-  ["ip_discharges","ip_alos","avoid_pct","ip_occ","ip_peak","ed_visits","ed_obs_rate","obs_hours","obs_occ","obs_peak"].forEach(function(k){
-    dg.appendChild(numField(S.demand[k]));
-  });
-  w2.appendChild(dg);
-  var k2 = el("div",{class:"kpis"});
-  k2.appendChild(kcard("Baseline ADC", f1(d.baseADC), null, fmt(d.baseDays)+" patient days"));
-  k2.appendChild(kcard("Avoidable admissions", fmt(d.avoided), null, "redirected to observation"));
-  k2.appendChild(kcard("Inpatient ADC", f1(d.ipADC)));
-  k2.appendChild(kcard("Licensed beds needed", fmt(d.ipBeds), "hi", "at "+Math.round(S.demand.ip_occ.v*100)+"% occupancy"));
-  k2.appendChild(kcard("Observation cases / yr", fmt(d.obsCases)));
-  k2.appendChild(kcard("Observation ADC", f1(d.obsADC)));
-  k2.appendChild(kcard("Observation beds", fmt(d.obsBeds), "hi", "outside the 100-bed license"));
-  k2.appendChild(kcard("Licensed supply", fmt(d.supply), null, "after private conversion"));
-  k2.appendChild(kcard("Headroom", (d.headroom>=0?"+":"")+fmt(d.headroom)+" beds", d.headroom>=0?"hi":"bad",
-    d.headroom>=0?"supply above demand":"short of demand"));
-  w2.appendChild(k2);
+  // A calculation ledger rather than a wall of drivers: one row per equation,
+  // inputs on the left where they are used, the value they produce on the
+  // right. Every step feeds the next, so the arithmetic is followable.
+  w2.appendChild(calcLedger(d));
 
   // Reconciliation narrative
   var rec = el("div",{style:"padding:14px 16px;background:#fbfcfd;border-top:1px solid var(--line);font-size:13.5px"});
@@ -1256,6 +1280,113 @@ function tabProgram(){
 
   v.appendChild(adminSection());
   return v;
+}
+
+
+// ── demand calculation ledger ───────────────────────────────────────
+// inlineNum renders a driver as an editable value inside a sentence
+function inlineNum(key, w){
+  var o = S.demand[key];
+  var shown = o.pct? Math.round(o.v*1e6)/1e4 : o.v;
+  var wrap = el("span",{style:"display:inline-flex;align-items:baseline;gap:2px;white-space:nowrap"});
+  var inp = el("input",{type:"text", value:shown, title:o.label+(o.assumed?" (assumed \u2014 confirm with BILH)":""),
+    style:"width:"+(w||46)+"px;font-family:inherit;font-size:13px;font-weight:900;color:var(--ink);"+
+          "background:#fff;border:none;border-bottom:1px solid "+(o.assumed?"#e0c98a":"#c7cfdb")+";"+
+          "text-align:center;padding:1px 0;outline:none;font-feature-settings:'tnum' 1"});
+  inp.addEventListener("focus",function(){ inp.style.borderBottomColor="var(--accent)"; });
+  inp.addEventListener("blur",function(){ inp.style.borderBottomColor=o.assumed?"#e0c98a":"#c7cfdb"; });
+  inp.addEventListener("change",function(e){
+    var n=Number(String(e.target.value).replace(/[^0-9.\-]/g,""));
+    if(!isNaN(n)&&n>=0){ o.v = o.pct? n/100 : n; render(); } else e.target.value=shown;
+  });
+  wrap.appendChild(inp);
+  if(o.pct) wrap.appendChild(el("span",{style:"font-size:11px;color:var(--mut)"},["%"]));
+  return wrap;
+}
+function ledgerHead(txt){
+  var tr=el("tr");
+  tr.appendChild(el("td",{colspan:"4",style:"background:#f3f6f9;font-weight:900;font-size:10.5px;"+
+    "text-transform:uppercase;letter-spacing:.09em;color:var(--mut);padding:7px 10px"},[txt]));
+  return tr;
+}
+// one equation: label · the calculation (mixed text + inputs) · = · result
+function ledgerRow(step, label, parts, result, unit, hi){
+  var tr=el("tr");
+  tr.appendChild(el("td",{style:"width:26px;color:var(--faint);font-size:11px;text-align:center"},[step]));
+  tr.appendChild(el("td",{style:"font-size:12.5px;color:var(--mut);width:210px"},[label]));
+  var calc=el("td",{style:"font-size:13px"});
+  var line=el("span",{style:"display:inline-flex;align-items:baseline;gap:5px;flex-wrap:wrap"});
+  parts.forEach(function(x){
+    line.appendChild(typeof x==="string"
+      ? el("span",{style:"color:var(--mut)"},[x]) : x);
+  });
+  calc.appendChild(line);
+  tr.appendChild(calc);
+  tr.appendChild(el("td",{class:"r",style:"width:150px;font-weight:900;font-feature-settings:'tnum' 1;"+
+    (hi?"color:var(--hlt)":"")},[result+(unit?" "+unit:"")]));
+  return tr;
+}
+function calcLedger(d){
+  var wrap=el("div",{style:"padding:2px 0 0"});
+  var t=el("table",{class:"prog",style:"font-size:13px"});
+  var tb=el("tbody");
+
+  tb.appendChild(ledgerHead("Inpatient beds"));
+  tb.appendChild(ledgerRow("1","Patient days today",
+    [inlineNum("ip_discharges",56)," discharges  \u00d7 ",inlineNum("ip_alos",40)," days ALOS"],
+    fmt(d.baseDays),"days"));
+  tb.appendChild(ledgerRow("2","Avoidable admissions",
+    [fmt(S.demand.ip_discharges.v)+" \u00d7 ",inlineNum("avoid_pct",40)," removed \u2014 these become observation cases"],
+    fmt(d.avoided),"discharges"));
+  tb.appendChild(ledgerRow("3","Inpatient discharges",
+    [fmt(S.demand.ip_discharges.v)+" \u2212 "+fmt(d.avoided)],
+    fmt(d.ipDisch),"discharges"));
+  tb.appendChild(ledgerRow("4","Inpatient patient days",
+    [fmt(d.ipDisch)+" \u00d7 "+f1(S.demand.ip_alos.v)+" days"],
+    fmt(d.ipDays),"days"));
+  tb.appendChild(ledgerRow("5","Average daily census",
+    [fmt(d.ipDays)+" \u00f7 365"],
+    f1(d.ipADC),"ADC"));
+  tb.appendChild(ledgerRow("6","Licensed beds needed",
+    [f1(d.ipADC)+" \u00d7 ",inlineNum("ip_peak",42)," peak  \u00f7 ",inlineNum("ip_occ",40)," occupancy"],
+    fmt(d.ipBeds),"beds",true));
+
+  tb.appendChild(ledgerHead("Observation beds"));
+  tb.appendChild(ledgerRow("7","Observation cases from the ED",
+    [inlineNum("ed_visits",58)," ED visits  \u00d7 ",inlineNum("ed_obs_rate",38)," observed"],
+    fmt(d.edObs),"cases"));
+  tb.appendChild(ledgerRow("8","Total observation cases",
+    [fmt(d.edObs)+" + "+fmt(d.avoided)+" avoidable admissions (step 2)"],
+    fmt(d.obsCases),"cases"));
+  tb.appendChild(ledgerRow("9","Observation days",
+    [fmt(d.obsCases)+" \u00d7 ",inlineNum("obs_hours",38)," h  \u00f7 24"],
+    fmt(d.obsDays),"days"));
+  tb.appendChild(ledgerRow("10","Average daily census",
+    [fmt(d.obsDays)+" \u00f7 365"],
+    f1(d.obsADC),"ADC"));
+  tb.appendChild(ledgerRow("11","Observation beds needed",
+    [f1(d.obsADC)+" \u00d7 ",inlineNum("obs_peak",42)," peak  \u00f7 ",inlineNum("obs_occ",40)," occupancy"],
+    fmt(d.obsBeds),"beds",true));
+
+  tb.appendChild(ledgerHead("Supply against demand"));
+  var tt=existingTotals();
+  tb.appendChild(ledgerRow("12","Licensed supply",
+    ["from the table above \u2014 "+fmt(tt.rooms)+" rooms today, "+fmt(tt.converted)+" converted, "+fmt(tt.added)+" added"],
+    fmt(d.supply),"beds"));
+  var hr=el("tr");
+  hr.appendChild(el("td",{style:"width:26px;color:var(--faint);font-size:11px;text-align:center"},["13"]));
+  hr.appendChild(el("td",{style:"font-size:12.5px;color:var(--mut)"},["Headroom"]));
+  hr.appendChild(el("td",{style:"font-size:13px;color:var(--mut)"},[fmt(d.supply)+" supply \u2212 "+fmt(d.ipBeds)+" needed"]));
+  hr.appendChild(el("td",{class:"r",style:"width:150px;font-weight:900;font-feature-settings:'tnum' 1;color:"+(d.headroom>=0?"var(--hlt)":"#c0392b")},
+    [(d.headroom>=0?"+":"")+fmt(d.headroom)+" beds"]));
+  tb.appendChild(hr);
+  tb.appendChild(ledgerRow("14","Observation unit area",
+    [fmt(d.obsBeds)+" beds \u00d7 "+fmt(bgsfPerBed()*(Number(S.typeFactors.obs)||1))+" BGSF/room \u2014 unlicensed, so it needs its own space"],
+    fmt(bgsfForBeds("obs",d.obsBeds)),"BGSF"));
+
+  t.appendChild(tb);
+  wrap.appendChild(t);
+  return wrap;
 }
 
 // ====================================================================
@@ -1468,8 +1599,8 @@ function render(){
   SITE_LAYOUTS.forEach(function(f){ try{ f(); }catch(e){} });
 }
 </script>
-<script src="js/recap.js?v=2.9"></script>
-<script src="js/floors-tab.js?v=2.9"></script>
+<script src="js/recap.js?v=3.5"></script>
+<script src="js/floors-tab.js?v=3.5"></script>
 <script>
 if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded", render); }
 else { render(); }

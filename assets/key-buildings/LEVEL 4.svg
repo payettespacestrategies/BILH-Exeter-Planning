@@ -2,32 +2,12 @@
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6973.28 5874.38">
   <defs>
     <style>
-      .cls-1, .cls-2, .cls-3 {
-        fill: none;
-      }
-
-      .cls-1, .cls-2, .cls-3, .cls-4 {
-        stroke: #000;
-        stroke-miterlimit: 10;
-        stroke-width: 4px;
-      }
-
-      .cls-2 {
-        stroke-dasharray: 0 0 0 0 0 0 19.73 19.73;
-      }
-
-      .cls-3 {
-        stroke-dasharray: 0 0 0 0 0 0 19.33 19.33;
-      }
-
-      .cls-4 {
-        fill: #fff;
-      }
-
-      .cls-5 {
-        fill: #c6c6c6;
-      }
-    </style>
+    .cls-1 { fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 26px; }
+    .cls-2 { fill: none; stroke: #aab2bd; stroke-miterlimit: 10; stroke-width: 13px; stroke-dasharray: 46 34; }
+    .cls-3 { fill: none; stroke: #aab2bd; stroke-miterlimit: 10; stroke-width: 13px; stroke-dasharray: 46 34; }
+    .cls-4 { stroke: #000; stroke-miterlimit: 10; stroke-width: 26px; fill: #fff; }
+    .cls-5 { fill: #c6c6c6; }
+  </style>
   </defs>
   <g id="east_wing_L1" data-name="east wing L1">
     <g id="Layer_3" data-name="Layer 3">

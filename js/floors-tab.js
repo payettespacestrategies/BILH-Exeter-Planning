@@ -26,7 +26,9 @@ var FL_BLOCK_HT = 12;             // drawn room height in section (ft)
 // drawing set. Program still lives in the single-building floorPlace state;
 // these transforms only translate between a composite SVG and that same state.
 var FL_SITE_VIEW_ENABLED = true;
-var FL = { building:"west", viewAll:false, _drag:null, _moveDrag:null, _sectionMode:false,
+// Key Buildings is the default view — the campus levels read first, and the
+// single-building tabs are the drill-down.
+var FL = { building:"west", viewAll:true, _drag:null, _moveDrag:null, _sectionMode:false,
            _fills:null, _canvasRedraws:[] };
 
 // Composite campus level -> individual building level. `s/tx/ty` map a
@@ -34,6 +36,14 @@ var FL = { building:"west", viewAll:false, _drag:null, _moveDrag:null, _sectionM
 //     composite = sheet * s + [tx, ty]
 // East Wing and West Wing start higher on the campus datum; the composite
 // level number therefore intentionally differs from the local level number.
+//
+// KNOWN DRAWING ISSUE: "LEVEL 3.svg" and "LEVEL 4.svg" in the supplied set are
+// byte-identical, and that one drawing carries East Wing L2 + West Wing L1.
+// So campus Level 3 draws the wrong East plate and campus Level 4 the wrong
+// West plate; the misfit part is flagged with `mismatch` and called out in the
+// card header. It cannot be corrected by transform — it needs the missing
+// drawing. It is also why Perry appears on Level 4 with no program: Perry has
+// only three levels, and that plate is Level 3's.
 var FL_KEY_VB = [0,0,6973.28,5874.38];
 var FL_KEY_LEVELS = {
   1:{file:"assets/key-buildings/LEVEL 1.svg",parts:[
@@ -49,7 +59,7 @@ var FL_KEY_LEVELS = {
     {bldg:"mob",   lvKey:"mob_l2",   s:1,tx:3023.33,ty:317.43}
   ]},
   3:{file:"assets/key-buildings/LEVEL 3.svg",parts:[
-    {bldg:"east",  lvKey:"east_l1",  s:1.736292428,tx:2060.49225,ty:2734.40614},
+    {bldg:"east",  lvKey:"east_l1",  s:1.736292428,tx:2060.49225,ty:2734.40614,mismatch:"drawing shows East Wing L2"},
     {bldg:"perry", lvKey:"perry_l3", s:1,tx:2217.37,ty:1305.27},
     {bldg:"west",  lvKey:"west_l1",  s:1,tx:1283.14,ty:3539.05},
     {bldg:"occ",   lvKey:"occ_l3",   s:1,tx:1608.59,ty:396.19},
@@ -58,7 +68,7 @@ var FL_KEY_LEVELS = {
   4:{file:"assets/key-buildings/LEVEL 4.svg",parts:[
     {bldg:"occ",  lvKey:"occ_l4",  s:1,tx:1608.59,ty:396.19},
     {bldg:"mob",  lvKey:"mob_l4",  s:1,tx:3023.33,ty:317.44},
-    {bldg:"west", lvKey:"west_l2", s:1,tx:1282.92,ty:3410.00},
+    {bldg:"west", lvKey:"west_l2", s:1,tx:1282.92,ty:3410.00,mismatch:"drawing shows West Wing L1"},
     {bldg:"east", lvKey:"east_l2", sx:1.734114607,sy:1.735208573,tx:2063.83883,ty:2735.63391}
   ]},
   5:{file:"assets/key-buildings/LEVEL 5.svg",parts:[
@@ -530,7 +540,7 @@ function flSiteLevels(){
 function flSiteParts(levelN){
   var d=FL_KEY_LEVELS[levelN]; if(!d) return [];
   return d.parts.map(function(q){
-    var p={bldg:q.bldg,lvKey:q.lvKey,sx:q.sx||q.s,sy:q.sy||q.s,tx:q.tx,ty:q.ty};
+    var p={bldg:q.bldg,lvKey:q.lvKey,sx:q.sx||q.s,sy:q.sy||q.s,tx:q.tx,ty:q.ty,mismatch:q.mismatch};
     p.meta=FLOOR_SRC[flSrcKey(p.lvKey)];
     p.mask=FLOOR_MASKS[flSrcKey(p.lvKey)];
     p.gx=function(sheetX){ return p.tx+sheetX*p.sx; };
@@ -551,6 +561,21 @@ function flSiteLevelCanvas(levelN){
   hd.appendChild(el("span",{style:"font-size:10.5px;color:var(--mut)"},[
     parts.map(function(p){ return bldgName(p.bldg)+" "+FLOOR_LEVELS[p.lvKey][2].replace("Level ","L"); }).join(" · ")
   ]));
+  // the supplied drawing set repeats one sheet across two campus levels, so one
+  // plate per affected level cannot line up — say so rather than look broken
+  var bad=parts.filter(function(p){ return p.mismatch; });
+  if(bad.length){
+    hd.appendChild(el("span",{
+      style:"font-size:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:#9a6b00;background:#fff5db;border:1px solid #f0dca8;padding:1px 6px",
+      title:bad.map(function(p){
+        var head = bldgName(p.bldg)+" "+FLOOR_LEVELS[p.lvKey][2]+" \u2014 "+p.mismatch+".";
+        var why  = "LEVEL 3.svg and LEVEL 4.svg in the drawing set are the same file, so this "+
+                   "plate is drawn for a different level and the program outline will not follow "+
+                   "it. Needs the missing drawing.";
+        return head+"\n"+why;
+      }).join("\n\n")
+    },["drawing mismatch"]));
+  }
   hd.appendChild(el("span",{style:"margin-left:auto;font-size:10.5px;font-weight:900;font-feature-settings:'tnum' 1;color:"+(placed>=usable&&placed?"#c07f00":"var(--mut)")},[
     fmt(placed)+" / "+fmt(usable)+" SF · "+(usable?Math.round(placed/usable*100):0)+"%"
   ]));
@@ -615,11 +640,26 @@ function flSiteLevelCanvas(levelN){
         });
         ctx.globalAlpha=1;
       }
-      ctx.font="900 9.5px Roboto, Arial"; ctx.textAlign="center"; ctx.fillStyle="#54637d";
-      var labelX=p.mask.ox+p.mask.w*p.mask.cell/2;
-      var labelY=p.mask.oy+p.mask.h*p.mask.cell+28/p.sy;
-      var lp=globalPx(p.gx(labelX),p.gy(labelY));
-      ctx.fillText(bldgName(p.bldg).toUpperCase()+" "+FLOOR_LEVELS[p.lvKey][2].replace("Level ","L"),lp[0],lp[1]);
+      // Name sits clear of the plate, not on top of its linework: push it out
+      // from the campus centre and knock the plan back out behind the text.
+      ctx.font="900 9.5px Roboto, Arial"; ctx.textAlign="center"; ctx.textBaseline="middle";
+      var cx0=p.mask.ox+p.mask.w*p.mask.cell/2;
+      var cy0=p.mask.oy+p.mask.h*p.mask.cell/2;
+      var c0=globalPx(p.gx(cx0),p.gy(cy0));
+      var e0=globalPx(p.gx(p.mask.ox),p.gy(p.mask.oy));
+      var e1=globalPx(p.gx(p.mask.ox+p.mask.w*p.mask.cell),p.gy(p.mask.oy+p.mask.h*p.mask.cell));
+      var halfW=Math.abs(e1[0]-e0[0])/2, halfH=Math.abs(e1[1]-e0[1])/2;
+      var vx=c0[0]-cv.width/2, vy=c0[1]-cv.height/2, vl=Math.sqrt(vx*vx+vy*vy)||1;
+      var lp=[c0[0]+vx/vl*(halfW+16), c0[1]+vy/vl*(halfH+12)];
+      var txt=bldgName(p.bldg).toUpperCase()+" "+FLOOR_LEVELS[p.lvKey][2].replace("Level ","L");
+      var tw=ctx.measureText(txt).width;
+      lp[0]=Math.max(tw/2+4, Math.min(cv.width-tw/2-4, lp[0]));
+      lp[1]=Math.max(9, Math.min(cv.height-6, lp[1]));
+      ctx.fillStyle="rgba(255,255,255,.9)";
+      ctx.fillRect(lp[0]-tw/2-3, lp[1]-6.5, tw+6, 13);
+      ctx.fillStyle="#54637d";
+      ctx.fillText(txt,lp[0],lp[1]);
+      ctx.textBaseline="alphabetic";
     });
     if(FL._moveDrag && FL._moveDrag.overSite===levelN){
       ctx.save(); ctx.strokeStyle="#1266cc"; ctx.lineWidth=2; ctx.setLineDash([6,4]);
