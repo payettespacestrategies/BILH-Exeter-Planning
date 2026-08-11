@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2592 1728">
+  <defs><style>
+    .o{fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:4px}
+    .g{fill:#c6c6c6}
+  </style></defs>
+  <rect class="g" x="669.62" y="791.15" width="146.04" height="192"/>
+  <rect class="g" x="894.3" y="914.72" width="77.62" height="199.15"/>
+  <rect class="g" x="1196.34" y="1217.79" width="113.36" height="114.13"/>
+  <path class="o" d="m1843.57,716.09h-140.94v597.45h-320.17v87.32h-787.4s-9.19-609.7,0-609.7h220.6V276.43h1027.91v438.13"/>
+</svg>

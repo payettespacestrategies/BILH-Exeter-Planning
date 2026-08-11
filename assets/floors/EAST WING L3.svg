@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2592 1728">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #000;
+        stroke-miterlimit: 10;
+        stroke-width: 4px;
+      }
+
+      .cls-2 {
+        fill: #c6c6c6;
+      }
+    </style>
+  </defs>
+  <g id="Layer_6" data-name="Layer 6">
+    <path class="cls-1" d="m1341.62,1102.63v103.16h-27.91v28.6s-128.34-1.02-128.34,0,0-27.57,0-27.57h-50.04v27.57h-128.68v-25.53h-26.55v-128.68h33.96"/>
+  </g>
+  <g id="Layer_3" data-name="Layer 3">
+    <rect class="cls-2" x="768.17" y="927.49" width="45.96" height="97.87"/>
+    <rect class="cls-2" x="1304.34" y="667.57" width="122.04" height="53.11"/>
+    <rect class="cls-2" x="1358.64" y="715.57" width="57.87" height="46.98"/>
+    <path class="cls-2" d="m855.66,1027.4v-60.09s82.38-.68,82.38,0v60.09h-82.38Z"/>
+    <rect class="cls-2" x="1375.32" y="1051.57" width="50.21" height="47.83"/>
+  </g>
+  <g id="Layer_2" data-name="Layer 2">
+    <polyline class="cls-1" points="1014.04 1080.17 1014.04 928 941.28 928 941.28 1027.4 768.17 1027.4 768.17 928 696 928"/>
+    <polyline class="cls-1" points="1652.09 667.57 1653.62 1102.63 1341.62 1102.63"/>
+    <line class="cls-1" x1="1652.09" y1="667.06" x2="1341.62" y2="667.06"/>
+    <path class="cls-1" d="m696.68,927.49c-.08-.94,0-44.43,0-44.43h117.45v-19.06h-59.06v-76.43h56v-225.44h194.55v-30.39h129.7v29.62h46.98v-29.62h128.17v30.64h31.15v104.68"/>
+  </g>
+</svg>

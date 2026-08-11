@@ -1,0 +1,10 @@
+# Client source documents — the RFP and BILH's own workbooks.
+# The dashboard does not load these at runtime; they are reference copies.
+# Kept out of the repo because this organisation publishes GitHub Pages sites,
+# and anything committed here could become publicly downloadable.
+assets/source/
+
+# OS / editor noise
+Thumbs.db
+.DS_Store
+*.tmp

@@ -1,0 +1,191 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6973.28 5874.38"><style>
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-7, .cls-8, .cls-9, .cls-10, .cls-11, .cls-12, .cls-13, .cls-14, .cls-15, .cls-16, .cls-17, .cls-18, .cls-19 {
+        stroke: #000;
+        stroke-miterlimit: 10;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-7, .cls-8, .cls-9, .cls-10, .cls-12, .cls-13, .cls-14, .cls-15, .cls-16, .cls-17, .cls-18, .cls-19 {
+        fill: none;
+      }
+
+      .cls-1, .cls-6, .cls-11, .cls-15 {
+        stroke-width: 4px;
+      }
+
+      .cls-2 {
+        stroke-dasharray: 0 0 19.59 19.59;
+      }
+
+      .cls-2, .cls-3, .cls-4, .cls-5, .cls-7, .cls-8, .cls-9, .cls-10, .cls-12, .cls-13, .cls-14, .cls-16, .cls-17, .cls-18, .cls-19 {
+        stroke-width: 3px;
+      }
+
+      .cls-3 {
+        stroke-dasharray: 0 0 22.31 22.31;
+      }
+
+      .cls-4 {
+        stroke-dasharray: 0 0 22.35 22.35;
+      }
+
+      .cls-5 {
+        stroke-dasharray: 0 0 18.71 18.71;
+      }
+
+      .cls-6 {
+        stroke-dasharray: 0 0 19.73 19.73;
+      }
+
+      .cls-7 {
+        stroke-dasharray: 0 0 20.59 20.59;
+      }
+
+      .cls-8 {
+        stroke-dasharray: 0 0 17.75 17.75;
+      }
+
+      .cls-10 {
+        stroke-dasharray: 0 0 20.24 20.24;
+      }
+
+      .cls-11 {
+        fill: #fff;
+      }
+
+      .cls-12 {
+        stroke-dasharray: 0 0 20.38 20.38;
+      }
+
+      .cls-13 {
+        stroke-dasharray: 0 0 24.99 24.99;
+      }
+
+      .cls-14 {
+        stroke-dasharray: 0 0 21.04 21.04;
+      }
+
+      .cls-15 {
+        stroke-dasharray: 0 0 19.33 19.33;
+      }
+
+      .cls-16 {
+        stroke-dasharray: 0 0 20.05 20.05;
+      }
+
+      .cls-17 {
+        stroke-dasharray: 0 0 19.82 19.82;
+      }
+
+      .cls-18 {
+        stroke-dasharray: 0 0 19.95 19.95;
+      }
+
+      .cls-20 {
+        fill: #c6c6c6;
+      }
+
+      .cls-19 {
+        stroke-dasharray: 0 0 20.28 20.28;
+      }
+    </style><defs>
+    <style>
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-7, .cls-8, .cls-9, .cls-10, .cls-11, .cls-12, .cls-13, .cls-14, .cls-15, .cls-16, .cls-17, .cls-18, .cls-19 {
+        stroke: #000;
+        stroke-miterlimit: 10;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-7, .cls-8, .cls-9, .cls-10, .cls-12, .cls-13, .cls-14, .cls-15, .cls-16, .cls-17, .cls-18, .cls-19 {
+        fill: none;
+      }
+
+      .cls-1, .cls-6, .cls-11, .cls-15 {
+        stroke-width: 4px;
+      }
+
+      .cls-2 {
+        stroke-dasharray: 0 0 19.59 19.59;
+      }
+
+      .cls-2, .cls-3, .cls-4, .cls-5, .cls-7, .cls-8, .cls-9, .cls-10, .cls-12, .cls-13, .cls-14, .cls-16, .cls-17, .cls-18, .cls-19 {
+        stroke-width: 3px;
+      }
+
+      .cls-3 {
+        stroke-dasharray: 0 0 22.31 22.31;
+      }
+
+      .cls-4 {
+        stroke-dasharray: 0 0 22.35 22.35;
+      }
+
+      .cls-5 {
+        stroke-dasharray: 0 0 18.71 18.71;
+      }
+
+      .cls-6 {
+        stroke-dasharray: 0 0 19.73 19.73;
+      }
+
+      .cls-7 {
+        stroke-dasharray: 0 0 20.59 20.59;
+      }
+
+      .cls-8 {
+        stroke-dasharray: 0 0 17.75 17.75;
+      }
+
+      .cls-10 {
+        stroke-dasharray: 0 0 20.24 20.24;
+      }
+
+      .cls-11 {
+        fill: #fff;
+      }
+
+      .cls-12 {
+        stroke-dasharray: 0 0 20.38 20.38;
+      }
+
+      .cls-13 {
+        stroke-dasharray: 0 0 24.99 24.99;
+      }
+
+      .cls-14 {
+        stroke-dasharray: 0 0 21.04 21.04;
+      }
+
+      .cls-15 {
+        stroke-dasharray: 0 0 19.33 19.33;
+      }
+
+      .cls-16 {
+        stroke-dasharray: 0 0 20.05 20.05;
+      }
+
+      .cls-17 {
+        stroke-dasharray: 0 0 19.82 19.82;
+      }
+
+      .cls-18 {
+        stroke-dasharray: 0 0 19.95 19.95;
+      }
+
+      .cls-20 {
+        fill: #c6c6c6;
+      }
+
+      .cls-19 {
+        stroke-dasharray: 0 0 20.28 20.28;
+      }
+    </style>
+  </defs><g id="east_wing_ground" data-name="east wing ground">
+    <g id="Layer_3" data-name="Layer 3">
+      <rect class="cls-20" x="3392.94" y="4280.01" width="79.92" height="236.77"/>
+      <rect class="cls-20" x="4385.6" y="3894.65" width="151.83" height="92.35"/>
+      <rect class="cls-20" x="4419.64" y="3978.12" width="100.62" height="81.69"/>
+      <path class="cls-20" d="m3545.06,4520.33v-104.48s143.24-1.18,143.24,0v104.48h-143.24Z"/>
+    </g>
+    <g id="Layer_2" data-name="Layer 2">
+      <path class="cls-1" d="m3392.94,4516.78v-236.77h79.92v-1161.36h431.52v271.7h436.84v261.05h394.22v159.81h-55.94v82.58h320.98v183.79h105.21v684.57h-105.21v290.34c-467.48,18.64-664.59,207.77-664.59,207.77v-255.71h-316.98v-194.45h-71.92v-230.41h-77.25v-62.89h-476.8"/>
+    </g>
+  </g></svg>

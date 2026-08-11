@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2592 1728">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #000;
+        stroke-miterlimit: 10;
+        stroke-width: 4px;
+      }
+
+      .cls-2 {
+        fill: #c6c6c6;
+      }
+    </style>
+  </defs>
+  <g id="Layer_3" data-name="Layer 3">
+    <polygon class="cls-2" points="815.66 788.85 815.66 902.81 669.62 902.81 669.62 791.15 815.66 788.85"/>
+    <rect class="cls-2" x="1196.34" y="1217.79" width="113.36" height="114.13"/>
+  </g>
+  <g id="Layer_2" data-name="Layer 2">
+    <path class="cls-1" d="m1831.83,716.09h-129.19v684.77H595.06s-9.19-609.7,0-609.7h220.6"/>
+    <rect class="cls-2" x="894.3" y="914.72" width="77.62" height="199.15"/>
+    <polyline class="cls-1" points="815.66 791.15 815.66 487.83 758.98 276.43 861.62 276.43 861.62 235.06 1345.7 235.06 1345.7 284.09 1843.57 284.09 1843.57 436.77 1928.85 436.77 1928.85 769.7 1831.83 769.7 1831.83 716.09"/>
+  </g>
+</svg>
