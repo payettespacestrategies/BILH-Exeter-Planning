@@ -172,9 +172,9 @@ footer{ margin-top:30px; padding-top:14px; border-top:1px solid var(--line); fon
 </footer>
 </div>
 
-<script src="js/site-graphic.js?v=3.5"></script>
-<script src="js/floor-plans.js?v=3.5"></script>
-<script src="js/key-buildings-data.js?v=3.5"></script>
+<script src="js/site-graphic.js?v=3.8"></script>
+<script src="js/floor-plans.js?v=3.8"></script>
+<script src="js/key-buildings-data.js?v=3.8"></script>
 <script>
 // ====================================================================
 // HEALTHCARE COLOR CATALOG  (PAYETTE_HEALTHCARE_PLAN_COLORS 03/11/2022)
@@ -229,7 +229,7 @@ var S = {
    name:"BILH-Exeter Hospital — Inpatient Bed Recapitalization Dashboard",
    client:"Beth Israel Lahey Health",
    location:"Exeter, NH",
-   version:"v0.4 · 2026-08-11",
+   version:"v0.5 · 2026-08-11",
    generated:"2026-08-11"
  },
 
@@ -306,18 +306,18 @@ var S = {
    ip_discharges:{v:5200, label:"Inpatient discharges / yr", assumed:true},
    ip_alos:{v:4.2,        label:"Inpatient ALOS (days)", assumed:true},
    avoid_pct:{v:0.08,     label:"Avoidable admissions removed", pct:true, assumed:true},
-   ip_occ:{v:0.80,        label:"Target inpatient occupancy", pct:true},
+   ip_occ:{v:0.90,        label:"Target inpatient occupancy", pct:true},
    ip_peak:{v:1.08,       label:"Peak / seasonal factor"},
    ed_visits:{v:45000,    label:"ED visits / yr", assumed:true},
    ed_obs_rate:{v:0.07,   label:"ED → observation rate", pct:true, assumed:true},
    obs_hours:{v:20,       label:"Observation ALOS (hours)"},
-   obs_occ:{v:0.70,       label:"Target observation occupancy", pct:true},
+   obs_occ:{v:0.85,       label:"Target observation occupancy", pct:true},
    obs_peak:{v:1.15,      label:"Observation peak factor"}
  },
 
  // ── Unit space program (32-bed Med/Surg module, from the workbook) ───
  module:{
-   beds:{v:32, label:"Beds in the module"},
+   beds:{v:18, label:"Beds in the module"},
    rows:[
      {cat:"Public",            nsf:1070,  note:"Family waiting (32 seats), public & family toilets, nourishment, resource centre, 2 consult/quiet rooms"},
      {cat:"Patient Rooms",     nsf:11676, note:"28 standard + 2 airborne infection isolation + 2 bariatric private rooms, with toilet/shower, charting alcoves and ante rooms"},
@@ -335,9 +335,9 @@ var S = {
  // Private-room conversion strategy — how many semi-private ROOMS convert
  conversion:{ W4:7, E4A:6, E4B:6 },
 
- // New private rooms added per unit to hold the bed count. Empty by default so
- // the table opens on the RFP's own position: convert and lose the beds.
- added:{},
+ // New private rooms added per unit, so the conversion holds the bed count
+ // rather than giving beds up. Matches the rooms converted below.
+ added:{ W4:7, E4A:6, E4B:6 },
 
  // ── Administrative Office program ───────────────────────────────────
  // Carried over unchanged from the Burlington dashboard. It sizes the
@@ -1155,6 +1155,19 @@ function tabProgram(){
   // A calculation ledger rather than a wall of drivers: one row per equation,
   // inputs on the left where they are used, the value they produce on the
   // right. Every step feeds the next, so the arithmetic is followable.
+  var k2 = el("div",{class:"kpis"});
+  k2.appendChild(kcard("Baseline ADC", f1(d.baseADC), null, fmt(d.baseDays)+" patient days"));
+  k2.appendChild(kcard("Avoidable admissions", fmt(d.avoided), null, "redirected to observation"));
+  k2.appendChild(kcard("Inpatient ADC", f1(d.ipADC)));
+  k2.appendChild(kcard("Licensed beds needed", fmt(d.ipBeds), "hi", "at "+Math.round(S.demand.ip_occ.v*100)+"% occupancy"));
+  k2.appendChild(kcard("Observation cases / yr", fmt(d.obsCases)));
+  k2.appendChild(kcard("Observation ADC", f1(d.obsADC)));
+  k2.appendChild(kcard("Observation beds", fmt(d.obsBeds), "hi", "outside the "+fmt(S.constraints.licensed_beds.v)+"-bed license"));
+  k2.appendChild(kcard("Licensed supply", fmt(d.supply), null, "after private conversion"));
+  k2.appendChild(kcard("Headroom", (d.headroom>=0?"+":"")+fmt(d.headroom)+" beds", d.headroom>=0?"hi":"bad",
+    d.headroom>=0?"supply above demand":"short of demand"));
+  w2.appendChild(k2);
+  // the ledger below shows how each of those numbers is arrived at
   w2.appendChild(calcLedger(d));
 
   // Reconciliation narrative
@@ -1176,16 +1189,16 @@ function tabProgram(){
   // ── 3. Space program module ──────────────────────────────────────
   var w3 = el("div",{class:"prog-cat"});
   var b3 = el("div",{class:"band",style:"background:#B6CDEF"});
-  b3.appendChild(el("span",{class:"bt"},["Unit Space Program — 32-bed Med/Surg module"]));
+  b3.appendChild(el("span",{class:"bt"},["Unit Space Program — "+fmt(S.module.beds.v)+"-bed Med/Surg module"]));
   b3.appendChild(el("span",{class:"chain",html:
     "<b>"+fmt(moduleNSF())+"</b> NSF <span>× "+f2(S.grossing.nsf_dgsf.v)+"</span> <b>"+fmt(moduleNSF()*S.grossing.nsf_dgsf.v)+
     "</b> DGSF <span>× "+f2(S.grossing.dgsf_bgsf.v)+"</span> <b>"+fmt(moduleNSF()*S.grossing.nsf_dgsf.v*S.grossing.dgsf_bgsf.v)+"</b> BGSF"}));
   w3.appendChild(b3);
   w3.appendChild(el("div",{class:"cat-note"},[
-    "Source: the InpatientBedProgram space program — a 32-room all-private Med/Surg unit (28 standard, 2 airborne infection isolation, 2 bariatric). Building support (linen chute, IDF, electrical) is carried in the grossing factors, not in NSF. Other unit types are scaled from this baseline by the factors below."
+    "Source: the InpatientBedProgram space program, drawn as a 32-room all-private Med/Surg unit (28 standard, 2 airborne infection isolation, 2 bariatric). Module beds is editable — set it to the unit size actually being planned and the whole area-per-bed chain, and every BGSF figure on the other tabs, follows. Adjust the NSF rows to match when you resize the module. Building support (linen chute, IDF, electrical) sits in the grossing factors, not in NSF; other unit types scale from this baseline by the factors below."
   ]));
   var k3 = el("div",{class:"kpis"});
-  k3.appendChild(kcard("Module beds", fmt(S.module.beds.v)));
+  k3.appendChild(kcardEdit("Module beds", S.module.beds, 1));
   k3.appendChild(kcard("NSF / bed", fmt(nsfPerBed())));
   k3.appendChild(kcard("DGSF / bed", fmt(dgsfPerBed())));
   k3.appendChild(kcard("BGSF / bed", fmt(bgsfPerBed()), "hi"));
@@ -1246,7 +1259,7 @@ function tabProgram(){
   UNIT_TYPES.forEach(function(ut){
     var ofType = S.existing.filter(function(u){return u.type===ut.id;});
     var beds  = ofType.reduce(function(a,u){return a+unitProposedBeds(u);},0);
-    var rooms = ofType.reduce(function(a,u){return a+unitRooms(u);},0);
+    var rooms = ofType.reduce(function(a,u){return a+unitRoomsAfter(u);},0);   // includes rooms added to hold beds
     if(ut.id==="obs"){ beds = d.obsBeds; rooms = d.obsBeds; }
     var f = Number(S.typeFactors[ut.id])||1;
     var gsf = bgsfPerBed()*f*rooms;
@@ -1275,14 +1288,41 @@ function tabProgram(){
   trf.appendChild(el("td",{class:"r"},[fmt(totGSF)]));
   tfb.appendChild(trf);
   tf.appendChild(tfb);
-  w3.appendChild(tf);
   v.appendChild(w3);
 
   v.appendChild(adminSection());
+
+  // the per-unit-type roll-up summarises everything above it, so it closes the page
+  var sumWrap = el("div",{class:"prog-cat"});
+  var sumBand = el("div",{class:"band",style:"background:#233044"});
+  sumBand.appendChild(el("span",{class:"bt",style:"color:#fff"},["Inpatient Program Summary \u2014 by unit type"]));
+  sumBand.appendChild(el("span",{class:"chain",style:"color:#fff"},[""]));
+  sumWrap.appendChild(sumBand);
+  sumWrap.appendChild(tf);
+  v.appendChild(sumWrap);
   return v;
 }
 
 
+
+// a KPI card whose headline number is editable
+function kcardEdit(label, obj, min, sub){
+  var c = el("div",{class:"card"});
+  c.appendChild(el("div",{class:"lab"},[label]));
+  var inp = el("input",{type:"text", value:obj.v, title:obj.label,
+    style:"width:100%;font-family:inherit;font-weight:900;font-size:21px;color:var(--ink);"+
+          "background:transparent;border:none;border-bottom:1px solid #c7cfdb;padding:0 0 1px;"+
+          "outline:none;font-feature-settings:'tnum' 1"});
+  inp.addEventListener("focus",function(){ inp.style.borderBottomColor="var(--accent)"; });
+  inp.addEventListener("blur",function(){ inp.style.borderBottomColor="#c7cfdb"; });
+  inp.addEventListener("change",function(e){
+    var n=Number(String(e.target.value).replace(/[^0-9.]/g,""));
+    if(!isNaN(n)&&n>=(min===undefined?0:min)){ obj.v=n; render(); } else e.target.value=obj.v;
+  });
+  c.appendChild(inp);
+  if(sub) c.appendChild(el("div",{class:"sm"},[sub]));
+  return c;
+}
 // ── demand calculation ledger ───────────────────────────────────────
 // inlineNum renders a driver as an editable value inside a sentence
 function inlineNum(key, w){
@@ -1599,8 +1639,8 @@ function render(){
   SITE_LAYOUTS.forEach(function(f){ try{ f(); }catch(e){} });
 }
 </script>
-<script src="js/recap.js?v=3.5"></script>
-<script src="js/floors-tab.js?v=3.5"></script>
+<script src="js/recap.js?v=3.8"></script>
+<script src="js/floors-tab.js?v=3.8"></script>
 <script>
 if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded", render); }
 else { render(); }

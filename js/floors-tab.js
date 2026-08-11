@@ -37,13 +37,13 @@ var FL = { building:"west", viewAll:true, _drag:null, _moveDrag:null, _sectionMo
 // East Wing and West Wing start higher on the campus datum; the composite
 // level number therefore intentionally differs from the local level number.
 //
-// KNOWN DRAWING ISSUE: "LEVEL 3.svg" and "LEVEL 4.svg" in the supplied set are
-// byte-identical, and that one drawing carries East Wing L2 + West Wing L1.
-// So campus Level 3 draws the wrong East plate and campus Level 4 the wrong
-// West plate; the misfit part is flagged with `mismatch` and called out in the
-// card header. It cannot be corrected by transform — it needs the missing
-// drawing. It is also why Perry appears on Level 4 with no program: Perry has
-// only three levels, and that plate is Level 3's.
+// Levels 3 and 4 were re-issued on 11 Aug as separate drawings (Perry is now
+// correctly a ghost on Level 4), and both West plates re-calibrate to a clean
+// 100% fit. One gap remains: in LEVEL 4.svg the group EAST_WING_LEVEL_4 holds
+// only its Layer_3 obstacle blocks — the Layer_2 outline every other building
+// carries was not exported, so the East plate there is an open partial shape
+// and its program outline cannot follow it. Flagged with `mismatch`; it needs
+// a re-export, not a transform.
 var FL_KEY_VB = [0,0,6973.28,5874.38];
 var FL_KEY_LEVELS = {
   1:{file:"assets/key-buildings/LEVEL 1.svg",parts:[
@@ -59,17 +59,17 @@ var FL_KEY_LEVELS = {
     {bldg:"mob",   lvKey:"mob_l2",   s:1,tx:3023.33,ty:317.43}
   ]},
   3:{file:"assets/key-buildings/LEVEL 3.svg",parts:[
-    {bldg:"east",  lvKey:"east_l1",  s:1.736292428,tx:2060.49225,ty:2734.40614,mismatch:"drawing shows East Wing L2"},
+    {bldg:"east",  lvKey:"east_l1",  s:1.698,tx:1986.00,ty:2716.00},
     {bldg:"perry", lvKey:"perry_l3", s:1,tx:2217.37,ty:1305.27},
-    {bldg:"west",  lvKey:"west_l1",  s:1,tx:1283.14,ty:3539.05},
+    {bldg:"west",  lvKey:"west_l1",  s:0.993437085,tx:1299.32227,ty:3549.37259},
     {bldg:"occ",   lvKey:"occ_l3",   s:1,tx:1608.59,ty:396.19},
     {bldg:"mob",   lvKey:"mob_l3",   s:1,tx:3023.33,ty:317.43}
   ]},
   4:{file:"assets/key-buildings/LEVEL 4.svg",parts:[
     {bldg:"occ",  lvKey:"occ_l4",  s:1,tx:1608.59,ty:396.19},
     {bldg:"mob",  lvKey:"mob_l4",  s:1,tx:3023.33,ty:317.44},
-    {bldg:"west", lvKey:"west_l2", s:1,tx:1282.92,ty:3410.00,mismatch:"drawing shows West Wing L1"},
-    {bldg:"east", lvKey:"east_l2", sx:1.734114607,sy:1.735208573,tx:2063.83883,ty:2735.63391}
+    {bldg:"west", lvKey:"west_l2", s:0.987999233,tx:1296.90802,ty:3420.80039},
+    {bldg:"east", lvKey:"east_l2", sx:1.734114607,sy:1.735208573,tx:2063.83883,ty:2735.63391,mismatch:"LEVEL 4.svg is missing the East Wing outline layer"}
   ]},
   5:{file:"assets/key-buildings/LEVEL 5.svg",parts:[
     {bldg:"east", lvKey:"east_l3", s:1.756979449,tx:2056.04123,ty:2703.10175},
@@ -569,9 +569,9 @@ function flSiteLevelCanvas(levelN){
       style:"font-size:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:#9a6b00;background:#fff5db;border:1px solid #f0dca8;padding:1px 6px",
       title:bad.map(function(p){
         var head = bldgName(p.bldg)+" "+FLOOR_LEVELS[p.lvKey][2]+" \u2014 "+p.mismatch+".";
-        var why  = "LEVEL 3.svg and LEVEL 4.svg in the drawing set are the same file, so this "+
-                   "plate is drawn for a different level and the program outline will not follow "+
-                   "it. Needs the missing drawing.";
+        var why  = "That building's outline layer is not in the campus drawing, so its plate "+
+                   "is an open partial shape and the program outline cannot follow it. Needs a "+
+                   "re-export of the drawing, not a change here.";
         return head+"\n"+why;
       }).join("\n\n")
     },["drawing mismatch"]));

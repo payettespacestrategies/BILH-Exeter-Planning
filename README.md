@@ -6,6 +6,24 @@ dashboard (`Burlington Plans`, v0.5) — same visual system, export/import and p
 
 **Open `index.html` in a browser.** Everything is offline and self-contained.
 
+## v0.5 (2026-08-11)
+
+- **Levels 2, 3 and 4 re-issued.** Levels 3 and 4 are now separate drawings, so Perry is
+  correctly a ghost on Level 4 and both West Wing plates re-solve to a clean 100% fit
+  (transforms derived from the named per-building groups the new files carry). One gap is
+  left: in `LEVEL 4.svg` the `EAST_WING_LEVEL_4` group holds only its obstacle layer — the
+  outline layer every other building has was not exported — so that plate is an open partial
+  shape. Flagged in the card header; it needs a re-export, not a transform.
+- **Module size is editable and set to 18 beds.** Note the knock-on: at 18 beds the source
+  20,577 NSF program gives 1,143 NSF/bed instead of 643, so every BGSF figure roughly
+  doubles. Trim the NSF rows to a real 18-bed program to bring it back.
+- Defaults synced to the saved state: inpatient occupancy 90%, observation occupancy 85%,
+  and the conversion now holds the bed count by default (19 rooms converted, 19 added).
+- The demand section keeps its key-metric cards across the top, with the calculation ledger
+  under them showing how each number is reached.
+- The by-unit-type roll-up moved to the very bottom of the Inpatient Program tab as a
+  closing summary, and its Rooms column now counts added rooms.
+
 ## v0.4 (2026-08-11)
 
 - **Hold the bed count by adding rooms.** Converting a semi-private room to private
