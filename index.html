@@ -58,10 +58,11 @@ input[type="number"]{ -moz-appearance:textfield; }
 .step-btn{ width:16px; height:11px; padding:0; border:0; background:#f3f6f9; color:var(--mut); font:900 7px/10px Arial,sans-serif; cursor:pointer; }
 .step-btn + .step-btn{ border-top:1px solid #d9dfe7; }
 .step-btn:hover{ background:var(--ink); color:#fff; }
-.module-slider{ display:grid; grid-template-columns:54px minmax(220px,1fr) 54px; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid var(--line); background:#f7f9fc; }
-.module-slider input[type="range"]{ width:100%; accent-color:#233044; cursor:pointer; }
-.module-slider .endpoint{ width:54px; border:1px solid #b9c3d0; background:#fff; padding:5px 4px; text-align:center; font-family:inherit; font-weight:900; color:var(--ink); }
-.module-bed-count{ display:inline-block; min-width:34px; text-align:center; font-size:28px; line-height:1; vertical-align:-2px; }
+.module-slider-card{ min-width:0; }
+.module-slider-card .module-bed-count{ font-size:28px; line-height:1.05; }
+.module-slider-controls{ display:grid; grid-template-columns:28px minmax(58px,1fr) 28px; align-items:center; gap:5px; margin-top:7px; }
+.module-slider-controls input[type="range"]{ width:100%; min-width:0; accent-color:#233044; cursor:pointer; }
+.module-slider-controls .endpoint{ width:28px; border:0; border-bottom:1px solid #b9c3d0; background:transparent; padding:1px 0; text-align:center; font-family:inherit; font-size:10px; font-weight:500; color:var(--mut); }
 .hint{ font-size:12px; font-weight:300; color:var(--faint); margin-top:8px; }
 .assumed{ display:inline-block; font-size:9.5px; font-weight:900; letter-spacing:.09em; text-transform:uppercase; color:#9a6b00; background:#fff5db; border:1px solid #f0dca8; padding:1px 5px; vertical-align:1px; margin-left:6px; }
 
@@ -1239,8 +1240,7 @@ function tabProgram(){
   // ── 3. Space program module ──────────────────────────────────────
   var w3 = el("div",{class:"prog-cat"});
   var b3 = el("div",{class:"band",style:"background:#B6CDEF"});
-  var moduleCount=el("span",{class:"module-bed-count"},[fmt(S.module.beds.v)]);
-  b3.appendChild(el("span",{class:"bt"},["Unit Space Program — ",moduleCount,"-bed Med/Surg module"]));
+  b3.appendChild(el("span",{class:"bt"},["Unit Space Program — "+fmt(S.module.beds.v)+"-bed Med/Surg module"]));
   b3.appendChild(el("span",{class:"chain",html:
     "<b>"+fmt(moduleNSF())+"</b> NSF <span>× "+f2(S.grossing.nsf_dgsf.v)+"</span> <b>"+fmt(moduleNSF()*S.grossing.nsf_dgsf.v)+
     "</b> DGSF <span>× "+f2(S.grossing.dgsf_bgsf.v)+"</span> <b>"+fmt(moduleNSF()*S.grossing.nsf_dgsf.v*S.grossing.dgsf_bgsf.v)+"</b> BGSF"}));
@@ -1248,8 +1248,8 @@ function tabProgram(){
   w3.appendChild(el("div",{class:"cat-note"},[
     "Source: the InpatientBedProgram space program, drawn as a 32-room all-private Med/Surg unit (28 standard, 2 airborne infection isolation, 2 bariatric). Module beds is editable — set it to the unit size actually being planned and the whole area-per-bed chain, and every BGSF figure on the other tabs, follows. Adjust the NSF rows to match when you resize the module. Building support (linen chute, IDF, electrical) sits in the grossing factors, not in NSF; other unit types scale from this baseline by the factors below."
   ]));
-  w3.appendChild(moduleBedsSlider(moduleCount));
   var k3 = el("div",{class:"kpis"});
+  k3.appendChild(moduleBedsSlider());
   k3.appendChild(kcard("NSF / bed", fmt(nsfPerBed())));
   k3.appendChild(kcard("DGSF / bed", fmt(dgsfPerBed())));
   k3.appendChild(kcard("BGSF / bed", fmt(bgsfPerBed()), "hi"));
@@ -1376,12 +1376,16 @@ function kcardEdit(label, obj, min, sub){
 }
 // ── demand calculation ledger ───────────────────────────────────────
 // inlineNum renders a driver as an editable value inside a sentence
-function moduleBedsSlider(countEl){
+function moduleBedsSlider(){
   var min=Math.max(1,Math.round(Number(S.module.sliderMin)||10));
   var max=Math.max(min+1,Math.round(Number(S.module.sliderMax)||35));
   var beds=Math.max(min,Math.min(max,Math.round(Number(S.module.beds.v)||18)));
   S.module.sliderMin=min; S.module.sliderMax=max; S.module.beds.v=beds;
-  var wrap=el("div",{class:"module-slider"});
+  var card=el("div",{class:"card module-slider-card"});
+  card.appendChild(el("div",{class:"lab"},["Module beds"]));
+  var countEl=el("div",{class:"big module-bed-count"},[fmt(beds)]);
+  card.appendChild(countEl);
+  var wrap=el("div",{class:"module-slider-controls"});
   var minInp=el("input",{type:"number",class:"endpoint",value:min,title:"Slider minimum"});
   var range=el("input",{type:"range",min:min,max:max,step:1,value:beds,title:"Beds in the Med/Surg module"});
   var maxInp=el("input",{type:"number",class:"endpoint",value:max,title:"Slider maximum"});
@@ -1405,7 +1409,8 @@ function moduleBedsSlider(countEl){
   });
   range.addEventListener("change",function(){ render(); });
   wrap.appendChild(minInp); wrap.appendChild(range); wrap.appendChild(maxInp);
-  return wrap;
+  card.appendChild(wrap);
+  return card;
 }
 function inlineNum(key, w){
   var o = S.demand[key];
